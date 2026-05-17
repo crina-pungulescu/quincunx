@@ -54,7 +54,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 
 ### View the presentation
 
-[https://crina-pungulescu.github.io/quincunx/](https://yourusername.github.io/quincunx/)
+[https://crina-pungulescu.github.io/quincunx/](https://crina-pungulescu.github.io/quincunx/)
 
 
 ---
