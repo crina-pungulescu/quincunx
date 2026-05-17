@@ -32,20 +32,20 @@ This presentation assumes you know nothing about finance. It will not derive the
 
 ### The age-old story
 
-- 3300 B.C.E. – The first ledgers
+- 3300 B.C.E. – The first writings (accounting ledgers)
 - 1300 B.C.E. – The Uluburun shipwreck (international trade)
-- c. 585 B.C.E. – Thales of Miletus proves a point by inventing a call option on olive presses
+- c. 585 B.C.E. – Thales of Miletus proves a point (a call option on olive presses)
 - 533 C.E. – The Rhodian law of jettison (insurance)
 - 1654 – Pascal and Fermat stumble upon probability theory
-- 1889 – Galton's quincunx
-- 1900 – Louis Bachelier's thesis and the birth of "modern finance"
+- 1894 – Galton's Law of Unreason (and quincunx)
+- 1900 – Louis Bachelier's thesis and the birth of "modern finance" (March 29th)
 - 1973 – Black, Scholes, and Merton (option pricing)
-- Today – The CAPM, and what it leaves out
+- Today – The CAPM and beyond
 
 ---
 ### Parting words of wisdom
 
-*"I really must say that you are an ignorant person, friend Greybeard, if you know nothing of this enigmatic business which is at once the fairest and most deceitful in Europe, the noblest and most infamous in the world, the finest and most vulgar on earth."*
+*"I really must say that you are an ignorant person, friend Greybeard, if you know nothing of this enigmatic business which is at once the fairest and most deceitful in Europe, the noblest and the most infamous in the world, the finest and the most vulgar on earth. It is a quintessence of academic learning and a paragon of fraudulence; it is a touchstone for the intelligent and a tombstone for the audacious, a treasury of usefulness and a source of disaster [...]"*
 — Josseph de la Vega, *Confusion de Confusiones* (Amsterdam, 1688)
 
 
