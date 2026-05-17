@@ -228,6 +228,8 @@
 
     <!-- Navigation dots -->
     <div class="nav-dots" id="navDots"></div>
+    
+    <audio id="global-audio" controls style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; background: rgba(0,0,0,0.7); border-radius: 8px; padding: 4px; width: 280px;"></audio>
 
     <script>
         const container = document.getElementById('slidesContainer');
@@ -271,12 +273,6 @@
         });
     </script>
     <script>
-    // Get the global audio player (centred at bottom)
-    const globalAudio = document.getElementById('global-audio');
-    // Get all slides
-    const slides = document.querySelectorAll('.slide');
-    // Get the scroll container (replace with your actual container ID, likely 'slidesContainer')
-    const container = document.getElementById('slidesContainer');
 
     function updateAudioForCurrentSlide() {
         if (!globalAudio || !container) return;
