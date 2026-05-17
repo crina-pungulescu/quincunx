@@ -11,7 +11,7 @@ A presentation about risk, from the Uluburun shipwreck to the CAPM. What ancient
 
 "Modern finance" is an old story, retold.
 
-Before there were prophets, there were profits. The oldest writing we have—cuneiform tablets from Mesopotamia—are not poetry or prayers. They are ledgers. We have been keeping score for 5,000 years. Because we have always known the future is uncertain, and we have never stopped looking for a way to face it.
+Before there were prophets, there were profits. The oldest writing we have—cuneiform tablets from Mesopotamia—are neither poetry nor prayers. They are accounting ledgers. We have been keeping score for 5,000 years. Because we have always known the future is uncertain. And we have never stopped looking for a way to face it.
 
 ---
 
@@ -26,7 +26,7 @@ Before there were prophets, there were profits. The oldest writing we have—cun
 
 ### The goal
 
-This presentation assumes you know nothing about finance. It will not derive the CAPM. It will, instead, show you why anyone ever needed to invent it.
+This presentation assumes you know nothing about finance. It will not derive the CAPM. It will, instead, show you why it needed to be invented.
 
 ---
 
@@ -34,11 +34,11 @@ This presentation assumes you know nothing about finance. It will not derive the
 
 - 3300 B.C.E. – The first ledgers
 - 1300 B.C.E. – The Uluburun shipwreck (risk pooling)
-- c. 585 B.C.E. – Thales of Miletus buys a call option on olive presses
+- c. 585 B.C.E. – Thales of Miletus invents a call option on olive presses
 - 533 C.E. – The Rhodian law of jettison (insurance)
-- 1654 – Pascal and Fermat invent probability theory
+- 1654 – Pascal and Fermat stumble upon probability theory
 - 1889 – Galton's quincunx
-- 1900 – Louis Bachelier's thesis (Brownian motion in stock prices)
+- 1900 – Louis Bachelier's thesis and the birth of "modern finance"
 - 1973 – Black, Scholes, and Merton (option pricing)
 - Today – The CAPM, and what it leaves out
 
@@ -62,9 +62,10 @@ This presentation assumes you know nothing about finance. It will not derive the
 
 - Quincunx simulation: [3D-PHASE](https://www.youtube.com/watch?v=3m4bxse2JEQ)
 - The Uluburun shipwreck: [Itaca - Museo del Mare](https://www.youtube.com/watch?v=Mc2Qa_TAh2w)
+- Poseidon, God of the Sea: [Mythos The Historian](https://www.youtube.com/watch?v=2MXGq88qu8s)
 - Template: [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill)
 - Narration: [ttsreader.com](https://ttsreader.com/player/)
-- The rest and everything you wish were different: [Crina Pungulescu](https://www.linkedin.com/in/crinapungulescu)
+- Whatever remains and everything you wish were different: [Crina Pungulescu](https://www.linkedin.com/in/crinapungulescu)
   
 
 ---
