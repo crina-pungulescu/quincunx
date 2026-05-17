@@ -33,8 +33,8 @@ This presentation assumes you know nothing about finance. It will not derive the
 ### The age-old story
 
 - 3300 B.C.E. – The first ledgers
-- 1300 B.C.E. – The Uluburun shipwreck (risk pooling)
-- c. 585 B.C.E. – Thales of Miletus invents a call option on olive presses
+- 1300 B.C.E. – The Uluburun shipwreck (international trade)
+- c. 585 B.C.E. – Thales of Miletus proves a point by inventing a call option on olive presses
 - 533 C.E. – The Rhodian law of jettison (insurance)
 - 1654 – Pascal and Fermat stumble upon probability theory
 - 1889 – Galton's quincunx
