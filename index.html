@@ -183,7 +183,7 @@
 <body>
     <div class="slides-container" id="slidesContainer">
         <!-- SLIDE 1: TITLE AND INTRO -->
-        <section class="slide hero">
+        <section class="slide" data-audio-src="audio/slide0.mp3">
             <div class="container">
                 <div class="kicker">quincunx</div>
                 <h1>How to see order in chaos?</h1>
@@ -198,10 +198,6 @@
                     Your browser does not support the video tag.
                     </video>
                 </div>
-                <div style="text-align: center; margin-top: 2rem;">
-                    <button class="slide-play" data-src="audio/slide0.mp3">▶ Play narration</button>
-                </div>
-                <a href="audio/slide0.mp3" target="_blank">Test audio file</a>
                 <div style="font-family: var(--font-serif); color: var(--kicker); font-style: italic; text-align: left; font-size: 1.5rem; margin-top: 0rem;"> Crina Pungulescu </div>
             </div>
         </section>
@@ -274,5 +270,45 @@
             }
         });
     </script>
-    <audio id="global-audio" controls style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; background: rgba(0,0,0,0.7); border-radius: 8px; padding: 4px; width: 280px;"></audio></body>
+    <script>
+    // Get the global audio player (centred at bottom)
+    const globalAudio = document.getElementById('global-audio');
+    // Get all slides
+    const slides = document.querySelectorAll('.slide');
+    // Get the scroll container (replace with your actual container ID, likely 'slidesContainer')
+    const container = document.getElementById('slidesContainer');
+
+    function updateAudioForCurrentSlide() {
+        if (!globalAudio || !container) return;
+        const scrollPos = container.scrollLeft;
+        const slideWidth = window.innerWidth;
+        const currentIndex = Math.round(scrollPos / slideWidth);
+        const currentSlide = slides[currentIndex];
+        if (currentSlide) {
+            const audioSrc = currentSlide.getAttribute('data-audio-src');
+            if (audioSrc && globalAudio.src !== audioSrc) {
+                globalAudio.src = audioSrc;
+                // Optional: reset pause/play state – do not autoplay
+                globalAudio.pause();
+                globalAudio.currentTime = 0;
+            }
+        }
+    }
+
+    // Initial load
+    updateAudioForCurrentSlide();
+
+    // Update on scroll
+    if (container) {
+        container.addEventListener('scroll', function() {
+            clearTimeout(window.audioScrollTimeout);
+            window.audioScrollTimeout = setTimeout(updateAudioForCurrentSlide, 100);
+        });
+    }
+
+    // Also update on window resize (which can change slide index due to re-centering)
+    window.addEventListener('resize', updateAudioForCurrentSlide);
+    </script>
+    <audio id="global-audio" controls style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; background: rgba(0,0,0,0.7); border-radius: 8px; padding: 4px; width: 280px;"></audio>
+</body>
 </html>
