@@ -273,38 +273,35 @@
         });
     </script>
     <script>
+        const globalAudio = document.getElementById('global-audio');
 
-    function updateAudioForCurrentSlide() {
-        if (!globalAudio || !container) return;
-        const scrollPos = container.scrollLeft;
-        const slideWidth = window.innerWidth;
-        const currentIndex = Math.round(scrollPos / slideWidth);
-        const currentSlide = slides[currentIndex];
-        if (currentSlide) {
-            const audioSrc = currentSlide.getAttribute('data-audio-src');
-            if (audioSrc && globalAudio.src !== audioSrc) {
-                globalAudio.src = audioSrc;
-                // Optional: reset pause/play state – do not autoplay
-                globalAudio.pause();
-                globalAudio.currentTime = 0;
+        function updateAudioForCurrentSlide() {
+            if (!globalAudio || !container) return;   // container already exists from first script
+            const scrollPos = container.scrollLeft;
+            const slideWidth = window.innerWidth;
+            const currentIndex = Math.round(scrollPos / slideWidth);
+            const currentSlide = slides[currentIndex]; // slides already exists from first script
+            if (currentSlide) {
+                const audioSrc = currentSlide.getAttribute('data-audio-src');
+                if (audioSrc && globalAudio.src !== audioSrc) {
+                    globalAudio.src = audioSrc;
+                    globalAudio.pause();
+                    globalAudio.currentTime = 0;
+                }
             }
         }
-    }
 
-    // Initial load
-    updateAudioForCurrentSlide();
+        updateAudioForCurrentSlide();
 
-    // Update on scroll
-    if (container) {
-        container.addEventListener('scroll', function() {
-            clearTimeout(window.audioScrollTimeout);
-            window.audioScrollTimeout = setTimeout(updateAudioForCurrentSlide, 100);
-        });
-    }
+        if (container) {
+            container.addEventListener('scroll', function() {
+                clearTimeout(window.audioScrollTimeout);
+                window.audioScrollTimeout = setTimeout(updateAudioForCurrentSlide, 100);
+            });
+        }
 
-    // Also update on window resize (which can change slide index due to re-centering)
-    window.addEventListener('resize', updateAudioForCurrentSlide);
-    </script>
+        window.addEventListener('resize', updateAudioForCurrentSlide);
+</script>
     <audio id="global-audio" controls style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; background: rgba(0,0,0,0.7); border-radius: 8px; padding: 4px; width: 280px;"></audio>
 </body>
 </html>
