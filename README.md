@@ -30,7 +30,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 
 ---
 
-### Contents
+### The age-old story
 
 - 3300 B.C.E. – The first ledgers
 - 1300 B.C.E. – The Uluburun shipwreck (risk pooling)
