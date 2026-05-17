@@ -45,8 +45,9 @@ This presentation assumes you know nothing about finance. It will not derive the
 ---
 ### Parting words of wisdom
 
-*"I really must say that you are an ignorant person, friend Greybeard, if you know nothing of this enigmatic business which is at once the fairest and most deceitful in Europe, the noblest and the most infamous in the world, the finest and the most vulgar on earth. It is a quintessence of academic learning and a paragon of fraudulence; it is a touchstone for the intelligent and a tombstone for the audacious, a treasury of usefulness and a source of disaster [...]"*
-— Josseph de la Vega, *Confusion de Confusiones* (Amsterdam, 1688)
+>"I really must say that you are an ignorant person, friend Greybeard, if you know nothing of this enigmatic business which is at once the fairest and most deceitful in Europe, the noblest and the most infamous in the world, the finest and the most vulgar on earth. It is a quintessence of academic learning and a paragon of fraudulence; it is a touchstone for the intelligent and a tombstone for the audacious, a treasury of usefulness and a source of disaster [...]"
+>
+> — Josseph de la Vega, *Confusion de Confusiones* (Amsterdam, 1688)
 
 
 ---
