@@ -30,7 +30,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 
 ---
 
-### The age-old story
+### The age-old story of finance
 
 - 3300 B.C.E. – The first writings (accounting ledgers)
 - 1300 B.C.E. – The Uluburun shipwreck (international trade)
