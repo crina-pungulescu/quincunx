@@ -9,10 +9,9 @@ A presentation about risk, from the Uluburun shipwreck to the CAPM. What ancient
 
 ### The argument
 
-"Modern finance" is as old as humanity itself.
+"Modern finance" is an old story, retold.
 
-Before there were prophets, there were profits. The oldest writing we have—cuneiform tablets from Mesopotamia—are not poetry or prayers. They are ledgers. We have been keeping score for 5,000 years because the future has always been uncertain, and we have always needed a way to face it.
-
+Before there were prophets, there were profits. The oldest writing we have—cuneiform tablets from Mesopotamia—are not poetry or prayers. They are ledgers. We have been keeping score for 5,000 years. Because we have always known the future is uncertain, and we have never stopped looking for a way to face it.
 
 ---
 
@@ -68,9 +67,9 @@ This presentation assumes you know nothing about finance. It will not derive the
 ---
 ### References
 
-- Desai, Mihir. The Wisdom of Finance: Discovering Humanity in the World of Risk and Return. Boston: Houghton Mifflin Harcourt, 2017
 - Aiden, Erez, and Jean-Baptiste Michel. Uncharted: Big Data as a Lens on Human Culture. New York: Riverhead Books, 2013
-
+- Desai, Mihir. The Wisdom of Finance: Discovering Humanity in the World of Risk and Return. Boston: Houghton Mifflin Harcourt, 2017
+  
 ---
 
 ### License
