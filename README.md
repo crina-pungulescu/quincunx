@@ -75,4 +75,4 @@ This presentation assumes you know nothing about finance. It will not derive the
 
 ### License
 
-MIT. Use it, remix it, teach it. Just keep the Galton quote.
+MIT. Use it, remix it, teach it. Keep one cool quotation? ;)
