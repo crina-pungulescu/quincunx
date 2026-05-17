@@ -60,9 +60,12 @@ This presentation assumes you know nothing about finance. It will not derive the
 
 ### Credits
 
+- Quincunx simulation: [3D-PHASE](https://www.youtube.com/watch?v=3m4bxse2JEQ)
+- The Uluburun shipwreck: [Itaca - Museo del Mare](https://www.youtube.com/watch?v=Mc2Qa_TAh2w))
 - Template: [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill)
-- Narration: Out Loud / SpeechWave (British English TTS)
-- Text and everything you wish were different: Crina Pungulescu
+- Narration: [ttsreader.com](https://ttsreader.com/player/)
+- The rest and everything you wish were different: Crina Pungulescu
+  
 
 ---
 ### References
