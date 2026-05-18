@@ -253,6 +253,96 @@
                 </div>
         </section>
 
+        <!-- SLIDE4: Pascal-Fermat Unfinished Game -->
+        <section class="slide" data-audio-src="audio/slide4.mp3">
+            <div class="container">
+            <div class="kicker" style="color: var(--accent);">Expected Value</div>
+            <h1>Measure</h1>
+            <h2 style="font-family: var(--font-serif); font-size: 2rem; margin-bottom: 1rem;">The Unfinished Game</h2>
+            <div class="body-text" style="max-width: 100%;">
+            <p style="margin-bottom: 1rem;">Best of 5 coin tosses. Interrupted when Player A leads 2–1. How to split the pot fairly?</p>
+            </div>
+
+            <!-- Interactive widget -->
+            <div style="background: #f4f2ea; border-radius: 12px; padding: 1.5rem; margin: 1rem 0; text-align: center;">
+                <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem;">🪙</div>
+                    <div>Player A<br>(Heads)</div>
+                </div>
+                <div style="font-size: 3rem;">vs</div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem;">🪙</div>
+                    <div>Player B<br>(Tails)</div>
+                </div>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <strong>Current score:</strong> Player A <span id="scoreA">2</span> – <span id="scoreB">1</span> Player B
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <strong>Remaining coin tosses needed to reach 3 wins:</strong> <span id="remaining">2</span>
+            </div>
+            <button id="simulateBtn" style="background: var(--accent); color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 25px; cursor: pointer; font-size: 1rem;">Simulate all possible outcomes</button>
+            <div id="resultArea" style="margin-top: 1.5rem; min-height: 120px;"></div>
+            <div id="wagerDisplay" style="margin-top: 1rem; font-weight: bold;">Fair split: A gets <span id="aShare">0</span>%, B gets <span id="bShare">0</span>%</div>
+            <div style="margin-top: 0.5rem; background: #e0ddd5; border-radius: 20px; height: 30px; width: 100%; overflow: hidden;">
+                <div id="wagerBarA" style="background: var(--accent); width: 0%; height: 100%; float: left; text-align: center; color: white; line-height: 30px;">75%</div>
+                <div id="wagerBarB" style="background: #8a7a6b; width: 0%; height: 100%; float: left; text-align: center; color: white; line-height: 30px;">25%</div>
+            </div>
+            </div>
+
+            <div class="credit" style="margin-top: 1rem;">Pascal & Fermat, 1654 – the invention of probability theory.</div>
+        </div>
+
+            <script>
+                (function() {
+                    const simulateBtn = document.getElementById('simulateBtn');
+                    const resultArea = document.getElementById('resultArea');
+                    const aShareSpan = document.getElementById('aShare');
+                    const bShareSpan = document.getElementById('bShare');
+                    const wagerBarA = document.getElementById('wagerBarA');
+                    const wagerBarB = document.getElementById('wagerBarB');
+
+                    function simulateGame() {
+                        // All possible sequences of 2 remaining tosses (HH, HT, TH, TT)
+                        const outcomes = [
+                            { seq: "HH", winner: "A", desc: "Heads, Heads → A reaches 4 wins, B stays at 1" },
+                            { seq: "HT", winner: "A", desc: "Heads, Tails → A reaches 3 wins, B stays at 2" },
+                            { seq: "TH", winner: "A", desc: "Tails, Heads → A reaches 3 wins, B stays at 2" },
+                            { seq: "TT", winner: "B", desc: "Tails, Tails → B reaches 3 wins, A stays at 2" }
+                        ];
+
+                        let aWins = 0, bWins = 0;
+                        let html = '<div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 0.5rem; text-align: left;">';
+                outcomes.forEach(out => {
+                            if (out.winner === 'A') aWins++;
+                            else bWins++;
+                            html += `<div style="background: #fff; padding: 0.5rem; border-radius: 6px;">🔮 ${out.seq}<br><span style="font-size:0.8rem;">${out.desc}</span></div>`;
+                        });
+                        html += '</div>';
+                        const total = aWins + bWins;
+                        const aPercent = (aWins / total) * 100;
+                        const bPercent = (bWins / total) * 100;
+
+                        html += `<div style="margin-top: 1rem;"><strong>Results:</strong> A wins ${aWins} of ${total} outcomes (${aPercent}%), B wins ${bWins} (${bPercent}%).</div>`;
+                        html += `<div style="margin-top: 0.5rem;">✉️ Fair division: A gets ${aPercent}% of the wager, B gets ${bPercent}%.</div>`;
+                    resultArea.innerHTML = html;
+
+                        aShareSpan.innerText = aPercent;
+                        bShareSpan.innerText = bPercent;
+                        wagerBarA.style.width = aPercent + '%';
+                        wagerBarB.style.width = bPercent + '%';
+                        wagerBarA.innerText = Math.round(aPercent) + '%';
+                        wagerBarB.innerText = Math.round(bPercent) + '%';
+                    }
+
+                    simulateBtn.addEventListener('click', simulateGame);
+                    // Auto-run once on page load
+                    simulateGame();
+                })();
+            </script>
+        </section>
+
         <!-- SLIDE 2: THE GALTON QUOTATION -->
         <section class="slide">
             <div class="container">
