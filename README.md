@@ -37,7 +37,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 - c. 585 B.C.E. – Thales of Miletus proves a point (a call option on olive presses)
 - 533 C.E. – The Rhodian law of jettison (insurance)
 - 1654 – Pascal and Fermat stumble upon probability theory
-- 1894 – Galton's Law of Unreason (and quincunx)
+- 1889 – Galton's Law of Unreason (interpretation of the quincunx)
 - 1900 – Louis Bachelier's thesis and the birth of "modern finance" (March 29th)
 - 1973 – Black, Scholes, and Merton (option pricing)
 - Today – The CAPM and beyond
@@ -76,7 +76,8 @@ This presentation assumes you know nothing about finance. It will not derive the
 - Aiden, Erez, and Jean-Baptiste Michel. Uncharted: Big Data as a Lens on Human Culture. New York: Riverhead Books, 2013
 - Desai, Mihir. The Wisdom of Finance: Discovering Humanity in the World of Risk and Return. Boston: Houghton Mifflin Harcourt, 2017
 - Devlin, Keith K. The Unfinished Game: Pascal, Fermat, and the Seventeenth-Century Letter that Made the World Modern. New York : Basic Books, 2008
-  
+- Galton, Francis. Natural Inheritance. London: MacMillan, 1889
+
 ---
 
 ### License
