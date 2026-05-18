@@ -302,137 +302,125 @@
         </div>
         </div>
 
-        <script>
-            (function() {
-                // Game state
-                let aWins = 0;
-                let bWins = 0;
-                let tossesDone = 0;
-                let gameActive = true;  // becomes false after 5 tosses, but reset on next click
 
-                // DOM elements
-                const coinDiv = document.getElementById('coin');
-                const tossBtn = document.getElementById('tossBtn');
-                const scoreASpan = document.getElementById('scoreA');
-                const scoreBSpan = document.getElementById('scoreB');
-                const tossCountSpan = document.getElementById('tossCount');
-                const probASpan = document.getElementById('probA');
-                const probBSpan = document.getElementById('probB');
-                const wagerADiv = document.getElementById('wagerA');
-                const wagerBDiv = document.getElementById('wagerB');
-                const coinImg = document.getElementById('coinImg');
-                const tossBtn = document.getElementById('tossBtn');
-                let isAnimating = false;
+            <script>
+(function() {
+    // Game state
+    let aWins =  0;
+    let bWins = 0;
+    let tossesDone = 0;
+    let gameActive = true;
 
-                // Helper: compute win probability from current state using DP
-                // maxTosses = 5, current aWins, bWins, tossesDone
-                function computeWinProb(a, b, remainingTosses) {
-                    // base cases
-                    if (a >= 3) return 1;
-                    if (b >= 3) return 0;
-                    if (remainingTosses === 0) return 0; // after all tosses, no one reached 3? impossible but safe
-                // memoization object
-                    const memo = new Map();
-                    function dp(aW, bW, rem) {
-                        if (aW >= 3) return 1;
-                        if (bW >= 3) return 0;
-                        if (rem === 0) return 0;
-                        const key = `${aW},${bW},${rem}`;
-                        if (memo.has(key)) return memo.get(key);
-                        const prob = 0.5 * dp(aW+1, bW, rem-1) + 0.5 * dp(aW, bW+1, rem-1);
-                        memo.set(key, prob);
-                        return prob;
-                    }
-                    return dp(a, b, remainingTosses);
-                }
+    // DOM elements
+    const coinImg = document.getElementById('coinImg');
+    const tossBtn = document.getElementById('tossBtn');
+    const scoreASpan = document.getElementById('scoreA');
+    const scoreBSpan = document.getElementById('scoreB');
+    const tossCountSpan = document.getElementById('tossCount');
+    const probASpan = document.getElementById('probA');
+    const probBSpan = document.getElementById('probB');
+    const wagerADiv = document.getElementById('wagerA');
+    const wagerBDiv = document.getElementById('wagerB');
 
-                function updateUI() {
-                    scoreASpan.innerText = aWins;
-                    scoreBSpan.innerText = bWins;
-                    tossCountSpan.innerText = tossesDone;
-                    const remaining = 5 - tossesDone;
-                    let probA = 0, probB = 0;
-                    if (tossesDone === 5) {
-                        // game ended, winner takes all
-                        if (aWins > bWins) probA = 100;
-                        else if (bWins > aWins) probB = 100;
-                        else { probA = 50; probB = 50; } // tie (should not happen in best-of-5)
-                    } else {
-                        probA = computeWinProb(aWins, bWins, remaining) * 100;
-                        probB = 100 - probA;
-                    }
-                    probASpan.innerText = probA.toFixed(1);
-                    probBSpan.innerText = probB.toFixed(1);
-                    // Update wager bar
-                    wagerADiv.style.width = probA + '%';
-                    wagerBDiv.style.width = probB + '%';
-                    wagerADiv.innerText = Math.round(probA) + '%';
-                    wagerBDiv.innerText = Math.round(probB) + '%';
-                }
+    let isAnimating = false;
 
-                function resetGame() {
-                    aWins = 0;
-                    bWins = 0;
-                    tossesDone = 0;
-                    gameActive = true;
-                    updateUI();
-                    // reset coin display
-                    coinDiv.innerHTML = '🪙';
-                    coinDiv.style.transform = '';
-                }
+    // Compute win probability using DP (given current scores and remaining tosses)
+    function computeWinProb(a, b, remaining) {
+        if (a >= 3) return 1;
+        if (b >= 3) return 0;
+        if (remaining === 0) return 0;
+        const memo = new Map();
+        function dp(aW, bW, rem) {
+            if (aW >= 3) return 1;
+            if (bW >= 3) return 0;
+            if (rem === 0) return 0;
+            const key = `${aW},${bW},${rem}`;
+            if (memo.has(key)) return memo.get(key);
+            const prob = 0.5 * dp(aW+1, bW, rem-1) + 0.5 * dp(aW, bW+1, rem-1);
+            memo.set(key, prob);
+            return prob;
+        }
+        return dp(a, b, remaining);
+    }
 
-            
+    function updateUI() {
+        scoreASpan.innerText = aWins;
+        scoreBSpan.innerText = bWins;
+        tossCountSpan.innerText = tossesDone;
+        const remaining = 5 - tossesDone;
+        let probA = 0, probB = 0;
+        if (tossesDone === 5) {
+            if (aWins > bWins) probA = 100;
+            else if (bWins > aWins) probB = 100;
+            else { probA = 50; probB = 50; }
+        } else {
+            probA = computeWinProb(aWins, bWins, remaining) * 100;
+            probB = 100 - probA;
+        }
+        probASpan.innerText = probA.toFixed(1);
+        probBSpan.innerText = probB.toFixed(1);
+        wagerADiv.style.width = probA + '%';
+        wagerBDiv.style.width = probB + '%';
+        wagerADiv.innerText = Math.round(probA) + '%';
+        wagerBDiv.innerText = Math.round(probB) + '%';
+    }
 
-                function animateCoin(result) {
-                    if (isAnimating) return;
-                    isAnimating = true;
-                // Flip animation
-                coinImg.style.transform = 'scaleX(-1)';
-                setTimeout(() => {
-                // Change image to result
-                const newSrc = result === 'H' ? 'images/head.png' : 'images/tails.png';
-                coinImg.src = newSrc;
-                coinImg.style.transform = 'scaleX(1)';
-                }, 100);
-                // Reset to default 'head.png' after a short delay (or keep the result)
-                setTimeout(() => {
-                // Optionally revert to a neutral image (e.g., head.png)
-                // coinImg.src = 'images/head.png';
-                isAnimating = false;
-                }, 800);
-                }
+    function resetGame() {
+        aWins = 0;
+        bWins = 0;
+        tossesDone = 0;
+        gameActive = true;
+        updateUI();
+        // Reset coin image to head
+        coinImg.src = 'images/head.png';
+        coinImg.style.transform = '';
+        isAnimating = false;
+    }
 
-                function performToss() {
-                    if (isAnimating) return;
-                    if (tossesDone >= 5) {
-                    resetGame();
-                    coinImg.src = 'images/head.png';  // reset image
-                    return;
-                }
-                if (!gameActive) return;
-                const isHeads = Math.random() < 0.5;
-                animateCoin(isHeads ? 'H' : 'T');
-                // Update game state after animation start
-                setTimeout(() => {
-                if (isHeads) aWins++;
-                else bWins++;
-                tossesDone++;
-                updateUI();
-                if (tossesDone === 5) gameActive = false;
-                }, 150);
-                }
+    function animateCoin(result) {
+        if (isAnimating) return;
+        isAnimating = true;
+        coinImg.style.transform = 'scaleX(-1)';
+        setTimeout(() => {
+            const newSrc = result === 'H' ? 'images/head.png' : 'images/tails.png';
+            coinImg.src = newSrc;
+            coinImg.style.transform = 'scaleX(1)';
+        }, 100);
+        // Reset anim flag after a short delay (but do NOT revert image)
+        setTimeout(() => {
+            isAnimating = false;
+        }, 300);
+    }
 
-                // Attach click events
-                tossBtn.addEventListener('click', performToss);
-                coinImg.parentElement.addEventListener('click', performToss); // clicks on the container also work
+    function performToss() {
+        if (isAnimating) return;
+        if (tossesDone >= 5) {
+            resetGame();
+            return;
+        }
+        if (!gameActive) return;
+        const isHeads = Math.random() < 0.5;
+        animateCoin(isHeads ? 'H' : 'T');
+        // Update game state after a short delay to let animation play
+        setTimeout(() => {
+            if (isHeads) aWins++;
+            else bWins++;
+            tossesDone++;
+            updateUI();
+            if (tossesDone === 5) gameActive = false;
+        }, 150);
+    }
 
-                    tossBtn.addEventListener('click', performToss);
-                    coinDiv.addEventListener('click', performToss);
-                    updateUI();
-                })();
-            </script>
-        </section>
+    // Attach click events (only once)
+    tossBtn.addEventListener('click', performToss);
+    coinImg.parentElement.addEventListener('click', performToss);
 
+    // Initial UI update
+    updateUI();
+})();
+</script>
+
+        
         
         <!-- SLIDE 2: THE GALTON QUOTATION -->
         <section class="slide">
