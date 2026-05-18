@@ -343,6 +343,153 @@
             </script>
         </section>
 
+        <!-- SLIDE: Pascal-Fermat Unfinished Game – Live Simulation -->
+<section class="slide" data-audio-src="audio/pascal.mp3">
+    <div class="container">
+        <div class="kicker">Probability is born</div>
+        <h2 style="font-family: var(--font-serif); font-size: 2rem; margin-bottom: 1rem;">The Unfinished Game</h2>
+        <div class="body-text" style="max-width: 100%;">
+            <p style="margin-bottom: 1rem;">Best of 5 coin tosses. Interrupted when Player A leads 2–1.<br> How to split the wager fairly?</p>
+        </div>
+
+        <!-- Live simulation widget -->
+        <div style="background: #f4f2ea; border-radius: 12px; padding: 1.5rem; margin: 1rem 0; text-align: center;">
+            <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem;" id="coinA">🪙</div>
+                    <div>Player A<br>(Heads)</div>
+                </div>
+                <div style="font-size: 3rem;">vs</div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem;" id="coinB">🪙</div>
+                    <div>Player B<br>(Tails)</div>
+                </div>
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+                <strong>Current score:</strong> Player A <span id="scoreA">2</span> – <span id="scoreB">1</span> Player B
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <strong>Remaining tosses needed:</strong> 2
+            </div>
+            <button id="tossBtn" style="background: var(--accent); color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 25px; cursor: pointer; font-size: 1rem; margin-bottom: 1rem;">🎲 Toss the remaining 2 coins</button>
+            <div id="animationArea" style="margin-bottom: 1rem; font-size: 1.5rem; min-height: 4rem;"></div>
+            <div id="statsArea" style="margin-top: 0.5rem; font-size: 0.9rem; background: #e0ddd5; border-radius: 8px; padding: 0.5rem;">
+                <strong>Simulated completions:</strong> <span id="totalSims">0</span><br>
+                Player A wins: <span id="aWins">0</span> &nbsp;|&nbsp; Player B wins: <span id="bWins">0</span><br>
+                <strong>Empirical probability:</strong> A <span id="empA">0</span>% &nbsp; B <span id="empB">0</span>%
+            </div>
+            <div id="theoryNote" style="margin-top: 0.8rem; font-style: italic; font-size: 0.85rem;">Theoretical fair split: A gets 75%, B gets 25%.</div>
+        </div>
+
+        <div class="credit" style="margin-top: 1rem;">Pascal & Fermat, 1654 – the invention of probability theory.</div>
+    </div>
+
+    <script>
+        (function() {
+            // Tracking variables
+            let totalSims = 0;
+            let aWinCount = 0;
+            let bWinCount = 0;
+
+            const tossBtn = document.getElementById('tossBtn');
+            const animationArea = document.getElementById('animationArea');
+            const totalSpan = document.getElementById('totalSims');
+            const aWinsSpan = document.getElementById('aWins');
+            const bWinsSpan = document.getElementById('bWins');
+            const empASpan = document.getElementById('empA');
+            const empBSpan = document.getElementById('empB');
+
+            function updateStatsDisplay() {
+                totalSpan.innerText = totalSims;
+                aWinsSpan.innerText = aWinCount;
+                bWinsSpan.innerText = bWinCount;
+                if (totalSims > 0) {
+                    const pA = (aWinCount / totalSims) * 100;
+                    const pB = (bWinCount / totalSims) * 100;
+                    empASpan.innerText = pA.toFixed(1);
+                    empBSpan.innerText = pB.toFixed(1);
+                } else {
+                    empASpan.innerText = '0';
+                    empBSpan.innerText = '0';
+                }
+            }
+
+            function animateCoinFlip(coinElementId, result) {
+                const elem = document.getElementById(coinElementId);
+                // Simple flip animation by changing emoji quickly
+                let flips = 0;
+                const interval = setInterval(() => {
+                    elem.style.transform = 'scaleX(-1)';
+                    setTimeout(() => { elem.style.transform = 'scaleX(1)'; }, 100);
+                    flips++;
+                    if (flips >= 3) {
+                        clearInterval(interval);
+                        elem.innerText = (result === 'H') ? '🪙 Heads' : '🪙 Tails';
+                        // after short delay reset to coin
+                        setTimeout(() => {
+                            if (coinElementId === 'coinA') elem.innerText = '🪙';
+                            else elem.innerText = '🪙';
+                        }, 800);
+                    }
+                }, 150);
+            }
+
+            function tossRemaining() {
+                // Simulate two coin tosses: each H (Heads) or T (Tails)
+                const toss1 = Math.random() < 0.5 ? 'H' : 'T';
+                const toss2 = Math.random() < 0.5 ? 'H' : 'T';
+                const sequence = toss1 + toss2;
+
+                // Determine winner of the game given current score (A=2, B=1)
+                // A needs one more win, B needs two more wins.
+                let winner = null;
+                let aFinalScore = 2;
+                let bFinalScore = 1;
+                if (toss1 === 'H') aFinalScore++;
+                else bFinalScore++;
+                if (toss2 === 'H') aFinalScore++;
+                else bFinalScore++;
+
+                if (aFinalScore >= 3) winner = 'A';
+                else if (bFinalScore >= 3) winner = 'B';
+                // In this setup, only after two tosses can B win (if both Tails)
+                // Safety:
+                if (!winner) winner = (aFinalScore > bFinalScore) ? 'A' : 'B';
+
+                // Animate the two coin flips
+                const coinAElem = document.getElementById('coinA');
+                const coinBElem = document.getElementById('coinB');
+                // simple text animation: show "Tossing..."
+                animationArea.innerHTML = '🎲 Tossing... 🎲';
+                setTimeout(() => {
+                    animationArea.innerHTML = `First toss: <strong>${toss1 === 'H' ? 'Heads' : 'Tails'}</strong> &nbsp;&nbsp; Second toss: <strong>${toss2 === 'H' ? 'Heads' : 'Tails'}</strong>`;
+                    // Update stats
+                    totalSims++;
+                    if (winner === 'A') aWinCount++;
+                    else bWinCount++;
+                    updateStatsDisplay();
+                    // Add a short message
+                    animationArea.innerHTML += `<br>🏆 ${winner} wins the game! (Final score: ${aFinalScore}–${bFinalScore})`;
+                    // Reset coin emoji after a delay
+                    setTimeout(() => {
+                        coinAElem.innerText = '🪙';
+                        coinBElem.innerText = '🪙';
+                    }, 1500);
+                }, 300);
+            }
+
+            tossBtn.addEventListener('click', tossRemaining);
+
+            // Optional: Show a small explanation of the four possible outcomes
+            const theoryNote = document.getElementById('theoryNote');
+            theoryNote.innerHTML = 'Theoretical fair split: A wins 3 of 4 possible sequences → 75%, B wins 25%. <button id="showOutcomesBtn" style="background: none; border: 1px solid var(--accent); border-radius: 12px; cursor: pointer; margin-left: 0.5rem;">Show sequences</button>';
+            document.getElementById('showOutcomesBtn').addEventListener('click', () => {
+                animationArea.innerHTML = '📜 All possible sequences of the 2 remaining tosses: HH, HT, TH, TT.<br> A wins HH, HT, TH → 3/4 = 75%. B wins TT → 1/4 = 25%.';
+            });
+        })();
+    </script>
+</section>
+
         <!-- SLIDE 2: THE GALTON QUOTATION -->
         <section class="slide">
             <div class="container">
