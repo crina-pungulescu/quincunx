@@ -67,7 +67,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 - Lex Rhodia: [The Path of Justice](https://www.youtube.com/watch?v=5GMYB3FrAa4)
 - Bachelier's Theory of Speculation: [OnePageCode](https://www.youtube.com/watch?v=CBSi3h83-9g)
 - Template: [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill)
-- Narration: [ttsreader.com](https://ttsreader.com/player/) and [narakeet.com](https://www.narakeet.com/languages/)
+- Narrations: [ttsreader.com](https://ttsreader.com/player/) and [narakeet.com](https://www.narakeet.com/languages/)
 - What remains and everything you wish were different: [Crina Pungulescu](https://www.linkedin.com/in/crinapungulescu)
   
 
@@ -75,6 +75,8 @@ This presentation assumes you know nothing about finance. It will not derive the
 ### References
 
 - Aiden, Erez, and Jean-Baptiste Michel. Uncharted: Big Data as a Lens on Human Culture. New York: Riverhead Books, 2013
+- Davis, Mark H., Etheridge, Alison. Speculation: Louis Bachelier and the Origins of Modern Finance.
+Princeton University Press, 2006
 - Desai, Mihir. The Wisdom of Finance: Discovering Humanity in the World of Risk and Return. Boston: Houghton Mifflin Harcourt, 2017
 - Devlin, Keith K. The Unfinished Game: Pascal, Fermat, and the Seventeenth-Century Letter that Made the World Modern. New York : Basic Books, 2008
 - Galton, Francis. Natural Inheritance. London: MacMillan, 1889
