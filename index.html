@@ -261,7 +261,167 @@
             <h2 style="font-family: var(--font-serif); font-size: 2rem; margin-bottom: 1rem;">Best of 5 coint tosses</h2>
         </section>
      
-               
+        <!-- SLIDE4: Pascal-Fermat Unfinished Game -->
+<section class="slide" data-audio-src="audio/slide4.mp3">
+    <div class="container">
+        <div class="kicker" style="color: var(--accent);">Expected Value</div>
+        <h1>Measure</h1>
+        <h2 style="font-family: var(--font-serif); font-size: 2rem; margin-bottom: 1rem;">Best of 5 coin tosses</h2>
+
+        <!-- Interactive Coin Toss Widget -->
+        <div style="background: #f4f2ea; border-radius: 16px; padding: 1.5rem; margin: 1.5rem 0; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            
+            <!-- Coin display (clickable) -->
+            <div id="coin" style="width: 100px; height: 100px; margin: 0 auto 1rem auto; background: radial-gradient(circle at 30% 30%, #f0d050, #c49b1f); border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; cursor: pointer; transition: transform 0.1s;">
+                🪙
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <button id="tossBtn" style="background: var(--accent); color: white; border: none; padding: 0.6rem 1.8rem; border-radius: 40px; font-size: 1rem; cursor: pointer; font-weight: bold;">Toss Coin</button>
+            </div>
+
+            <!-- Game state -->
+            <div style="display: flex; justify-content: space-between; max-width: 300px; margin: 0 auto 1rem auto;">
+                <div><strong>Player A (Heads)</strong><br><span id="scoreA" style="font-size: 2rem;">0</span></div>
+                <div><strong>Player B (Tails)</strong><br><span id="scoreB" style="font-size: 2rem;">0</span></div>
+            </div>
+            <div><strong>Tosses so far:</strong> <span id="tossCount">0</span> / 5</div>
+
+            <!-- Probability display -->
+            <div style="margin-top: 1rem; background: #e8e5dc; border-radius: 12px; padding: 0.8rem;">
+                <div><strong>📊 Probability of winning the match</strong></div>
+                <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 0.5rem;">
+                    <span>Player A: <span id="probA" style="font-weight: bold;">0</span>%</span>
+                    <span>Player B: <span id="probB" style="font-weight: bold;">0</span>%</span>
+                </div>
+            </div>
+
+            <!-- Visual wager split (stack of coins) -->
+            <div style="margin-top: 1rem;">
+                <div style="font-size: 0.8rem; margin-bottom: 0.3rem;">Fair split of the wager</div>
+                <div style="background: #cdc9bc; border-radius: 20px; height: 30px; width: 100%; overflow: hidden; display: flex;">
+                    <div id="wagerA" style="background: var(--accent); width: 0%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">0%</div>
+                    <div id="wagerB" style="background: #8a7a6b; width: 0%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">0%</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1rem; font-size: 0.75rem; color: #5a5a4a;">Click the coin or the button to toss. After 5 tosses, next toss resets the game.</div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Game state
+            let aWins = 0;
+            let bWins = 0;
+            let tossesDone = 0;
+            let gameActive = true;  // becomes false after 5 tosses, but reset on next click
+
+            // DOM elements
+            const coinDiv = document.getElementById('coin');
+            const tossBtn = document.getElementById('tossBtn');
+            const scoreASpan = document.getElementById('scoreA');
+            const scoreBSpan = document.getElementById('scoreB');
+            const tossCountSpan = document.getElementById('tossCount');
+            const probASpan = document.getElementById('probA');
+            const probBSpan = document.getElementById('probB');
+            const wagerADiv = document.getElementById('wagerA');
+            const wagerBDiv = document.getElementById('wagerB');
+
+            // Helper: compute win probability from current state using DP
+            // maxTosses = 5, current aWins, bWins, tossesDone
+            function computeWinProb(a, b, remainingTosses) {
+                // base cases
+                if (a >= 3) return 1;
+                if (b >= 3) return 0;
+                if (remainingTosses === 0) return 0; // after all tosses, no one reached 3? impossible but safe
+                // memoization object
+                const memo = new Map();
+                function dp(aW, bW, rem) {
+                    if (aW >= 3) return 1;
+                    if (bW >= 3) return 0;
+                    if (rem === 0) return 0;
+                    const key = `${aW},${bW},${rem}`;
+                    if (memo.has(key)) return memo.get(key);
+                    const prob = 0.5 * dp(aW+1, bW, rem-1) + 0.5 * dp(aW, bW+1, rem-1);
+                    memo.set(key, prob);
+                    return prob;
+                }
+                return dp(a, b, remainingTosses);
+            }
+
+            function updateUI() {
+                scoreASpan.innerText = aWins;
+                scoreBSpan.innerText = bWins;
+                tossCountSpan.innerText = tossesDone;
+                const remaining = 5 - tossesDone;
+                let probA = 0, probB = 0;
+                if (tossesDone === 5) {
+                    // game ended, winner takes all
+                    if (aWins > bWins) probA = 100;
+                    else if (bWins > aWins) probB = 100;
+                    else { probA = 50; probB = 50; } // tie (should not happen in best-of-5)
+                } else {
+                    probA = computeWinProb(aWins, bWins, remaining) * 100;
+                    probB = 100 - probA;
+                }
+                probASpan.innerText = probA.toFixed(1);
+                probBSpan.innerText = probB.toFixed(1);
+                // Update wager bar
+                wagerADiv.style.width = probA + '%';
+                wagerBDiv.style.width = probB + '%';
+                wagerADiv.innerText = Math.round(probA) + '%';
+                wagerBDiv.innerText = Math.round(probB) + '%';
+            }
+
+            function resetGame() {
+                aWins = 0;
+                bWins = 0;
+                tossesDone = 0;
+                gameActive = true;
+                updateUI();
+                // reset coin display
+                coinDiv.innerHTML = '🪙';
+                coinDiv.style.transform = '';
+            }
+
+            function animateCoin(result) {
+                // Simple flip animation
+                coinDiv.style.transform = 'scaleX(-1)';
+                setTimeout(() => {
+                    coinDiv.innerHTML = result === 'H' ? '🪙 H' : '🪙 T';
+                    coinDiv.style.transform = 'scaleX(1)';
+                }, 100);
+                setTimeout(() => {
+                    coinDiv.innerHTML = '🪙';
+                }, 800);
+            }
+
+            function performToss() {
+                if (tossesDone >= 5) {
+                    resetGame();
+                    return;
+                }
+                if (!gameActive) return;
+                // Random toss
+                const isHeads = Math.random() < 0.5;
+                if (isHeads) aWins++;
+                else bWins++;
+                tossesDone++;
+                animateCoin(isHeads ? 'H' : 'T');
+                updateUI();
+                if (tossesDone === 5) {
+                    gameActive = false;
+                }
+            }
+
+            tossBtn.addEventListener('click', performToss);
+            coinDiv.addEventListener('click', performToss);
+            updateUI();
+        })();
+    </script>
+</section>
+
+        
         <!-- SLIDE 2: THE GALTON QUOTATION -->
         <section class="slide">
             <div class="container">
