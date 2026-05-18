@@ -259,15 +259,15 @@
     <div class="container">
         <div class="kicker" style="color: var(--accent);">Expected Value</div>
         <h1>Measure</h1>
-        <div class="subtitle">Best of 5 coint tosses wins</div>
+        <div class="subtitle">Best of 5 coin tosses wins. What if the game is unfinished?</div>
 
         <!-- Interactive Coin Toss Widget -->
         <div style="background: #f4f2ea; border-radius: 16px; padding: 1.5rem; margin: 1.5rem 0; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
             
             <!-- Coin display (clickable) -->
     
-            <div id="coin" style="width: 100px; height: 100px; margin: 0 auto 1rem auto; background: radial-gradient(circle at 30% 30%, #f0d050, #c49b1f); border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; cursor: pointer; transition: transform 0.1s;">
-                🪙
+            <div id="coinContainer" style="width: 150px; height: 150px; margin: 0 auto 1rem auto; cursor: pointer;">
+                <img id="coinImg" src="images/head.png" alt="coin" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.2); background: #f0d050; display: block;">
             </div>
             <div style="margin-bottom: 1rem;">
                 <button id="tossBtn" style="background: var(--accent); color: white; border: none; padding: 0.6rem 1.8rem; border-radius: 40px; font-size: 1rem; cursor: pointer; font-weight: bold;">Toss Coin</button>
@@ -320,6 +320,9 @@
             const probBSpan = document.getElementById('probB');
             const wagerADiv = document.getElementById('wagerA');
             const wagerBDiv = document.getElementById('wagerB');
+            const coinImg = document.getElementById('coinImg');
+            const tossBtn = document.getElementById('tossBtn');
+            let isAnimating = false;
 
             // Helper: compute win probability from current state using DP
             // maxTosses = 5, current aWins, bWins, tossesDone
@@ -378,35 +381,50 @@
                 coinDiv.style.transform = '';
             }
 
-            function animateCoin(result) {
-                // Simple flip animation
-                coinDiv.style.transform = 'scaleX(-1)';
-                setTimeout(() => {
-                    coinDiv.innerHTML = result === 'H' ? '🪙 H' : '🪙 T';
-                    coinDiv.style.transform = 'scaleX(1)';
-                }, 100);
-                setTimeout(() => {
-                    coinDiv.innerHTML = '🪙';
-                }, 800);
-            }
+            
 
-            function performToss() {
-                if (tossesDone >= 5) {
-                    resetGame();
-                    return;
-                }
-                if (!gameActive) return;
-                // Random toss
-                const isHeads = Math.random() < 0.5;
-                if (isHeads) aWins++;
-                else bWins++;
-                tossesDone++;
-                animateCoin(isHeads ? 'H' : 'T');
-                updateUI();
-                if (tossesDone === 5) {
-                    gameActive = false;
-                }
-            }
+function animateCoin(result) {
+    if (isAnimating) return;
+    isAnimating = true;
+    // Flip animation
+    coinImg.style.transform = 'scaleX(-1)';
+    setTimeout(() => {
+        // Change image to result
+        const newSrc = result === 'H' ? 'images/head.png' : 'images/tails.png';
+        coinImg.src = newSrc;
+        coinImg.style.transform = 'scaleX(1)';
+    }, 100);
+    // Reset to default 'head.png' after a short delay (or keep the result)
+    setTimeout(() => {
+        // Optionally revert to a neutral image (e.g., head.png)
+        // coinImg.src = 'images/head.png';
+        isAnimating = false;
+    }, 800);
+}
+
+function performToss() {
+    if (isAnimating) return;
+    if (tossesDone >= 5) {
+        resetGame();
+        coinImg.src = 'images/head.png';  // reset image
+        return;
+    }
+    if (!gameActive) return;
+    const isHeads = Math.random() < 0.5;
+    animateCoin(isHeads ? 'H' : 'T');
+    // Update game state after animation start
+    setTimeout(() => {
+        if (isHeads) aWins++;
+        else bWins++;
+        tossesDone++;
+        updateUI();
+        if (tossesDone === 5) gameActive = false;
+    }, 150);
+}
+
+// Attach click events
+tossBtn.addEventListener('click', performToss);
+coinImg.parentElement.addEventListener('click', performToss); // clicks on the container also work
 
             tossBtn.addEventListener('click', performToss);
             coinDiv.addEventListener('click', performToss);
