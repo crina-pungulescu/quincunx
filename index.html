@@ -32,59 +32,42 @@
             height: 100vh;
         }
 
-        /* Slides container */
         .slides-container {
-            display: flex;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scroll-snap-type: x mandatory;
-            height: 100vh;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-x;
-            overscroll-behavior-x: contain;
-            overscroll-behavior-y: none;
-        }
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    height: 100vh;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+}
 
-        /* Individual slide */
-        .slide {
-            flex: 0 0 100%;
-            scroll-snap-align: start;
-            overflow: hidden;
-            background: var(--bg-body);
-            color: var(--text-body);
-            position: relative;
-            height: 100vh;
-        }
+.slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
 
-        /* Fix for Galton slide – ensure content fits without vertical scroll */
-        .slide[data-audio-src="audio/slide5.mp3"] .container {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-            justify-content: center;
-            min-height: auto;  /* override any min-height */
-        }
+    overflow-y: auto;
+    overflow-x: hidden;
 
-        .slide[data-audio-src="audio/slide5.mp3"] {
-            overflow-y: hidden;  /* disable vertical scroll – content will fit */
-        }
+    background: var(--bg-body);
+    color: var(--text-body);
+    position: relative;
+    height: 100vh;
 
-        .slide.hero {
-            background: var(--bg-hero);
-            color: var(--text-hero);
-        }
+    overscroll-behavior-y: contain;
+}
 
-        /* Content container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 3rem;
-            /* min-height: 100vh;  DELETE or comment out */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 3rem;
+    min-height: 100vh;
 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
         /* Typography */
         .kicker {
             font-family: var(--font-mono);
@@ -486,6 +469,7 @@
         </section>
     
 
+    </div> <!-- closes slides-container -->
     <!-- Navigation dots -->
     <div class="nav-dots" id="navDots"></div>
     
