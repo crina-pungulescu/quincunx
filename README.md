@@ -65,7 +65,6 @@ This presentation assumes you know nothing about finance. It will not derive the
 - The Uluburun shipwreck: [Itaca - Museo del Mare](https://www.youtube.com/watch?v=Mc2Qa_TAh2w)
 - Poseidon, God of the Sea: [Mythos The Historian](https://www.youtube.com/watch?v=2MXGq88qu8s)
 - Lex Rhodia: [The Path of Justice](https://www.youtube.com/watch?v=5GMYB3FrAa4)
-- Pascal and Fermat Correspondence: [Matematickcom Official](https://www.youtube.com/watch?v=1WTu6OTaOFI)
 - Template: [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill)
 - Narration: [ttsreader.com](https://ttsreader.com/player/)
 - What remains and everything you wish were different: [Crina Pungulescu](https://www.linkedin.com/in/crinapungulescu)
