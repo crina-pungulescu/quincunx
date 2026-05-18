@@ -65,6 +65,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 - The Uluburun shipwreck: [Itaca - Museo del Mare](https://www.youtube.com/watch?v=Mc2Qa_TAh2w)
 - Poseidon, God of the Sea: [Mythos The Historian](https://www.youtube.com/watch?v=2MXGq88qu8s)
 - Lex Rhodia: [The Path of Justice](https://www.youtube.com/watch?v=5GMYB3FrAa4)
+- Pascal and Fermat Correspondence: [Matematickcom Official](https://www.youtube.com/watch?v=1WTu6OTaOFI)
 - Template: [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill)
 - Narration: [ttsreader.com](https://ttsreader.com/player/)
 - What remains and everything you wish were different: [Crina Pungulescu](https://www.linkedin.com/in/crinapungulescu)
@@ -75,6 +76,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 
 - Aiden, Erez, and Jean-Baptiste Michel. Uncharted: Big Data as a Lens on Human Culture. New York: Riverhead Books, 2013
 - Desai, Mihir. The Wisdom of Finance: Discovering Humanity in the World of Risk and Return. Boston: Houghton Mifflin Harcourt, 2017
+- Devlin, Keith K. The Unfinished Game: Pascal, Fermat, and the Seventeenth-Century Letter that Made the World Modern. New York : Basic Books, 2008
   
 ---
 
