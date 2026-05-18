@@ -36,22 +36,25 @@
         .slides-container {
             display: flex;
             overflow-x: auto;
-            overflow-y: hidden;   /* keep this – prevents vertical scroll on container */
+            overflow-y: hidden;
             scroll-snap-type: x mandatory;
             height: 100vh;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
-            touch-action: pan-x;  /* ADD THIS – explicitly allow only horizontal panning */
+            touch-action: pan-x;
+            overscroll-behavior-x: contain;
+            overscroll-behavior-y: none;
         }
 
         /* Individual slide */
         .slide {
             flex: 0 0 100%;
             scroll-snap-align: start;
-            overflow-y: auto;     /* ADD THIS – let each slide scroll vertically if content is too tall */
+            overflow: hidden;
             background: var(--bg-body);
             color: var(--text-body);
             position: relative;
+            height: 100vh;
         }
 
         /* Fix for Galton slide – ensure content fits without vertical scroll */
@@ -247,7 +250,7 @@
                            style="max-width: 70% !important; width: auto; height: auto; display: inline-block;">
                     Your browser does not support the video tag.
                     </video>
-                </div>
+            </div>
         </section>
 
         <!-- SLIDE 3: INSURE -->
@@ -255,7 +258,7 @@
             <div class="container">
                 <div class="kicker" style="color: var(--accent);">Risk Pooling</div>
                 <h1>Insure</h1>
-                 <div class="image-frame" style="text-align: center;">
+                <div class="image-frame" style="text-align: center;">
                     <video src="video/lex_rhodia.mp4" 
                            autoplay 
                            muted 
@@ -265,6 +268,7 @@
                     Your browser does not support the video tag.
                     </video>
                 </div>
+            </div>
         </section>
 
      
