@@ -1056,7 +1056,7 @@ traces.push({
     x: regX.map(v => v * 100),
     y: regY.map(v => v * 100),
     mode: 'lines',
-    name: `Beta = ${beta.toFixed(2)}`,
+    showlegend: false,
     line: { color: '#222', width: 2 }
 });
                         
@@ -1093,6 +1093,22 @@ traces.push({
                             scaleratio: 1,
                             constrain: 'domain'
                         },
+
+                        annotations: showBeta ? [{
+    x: regX[1] * 100,
+    y: regY[1] * 100,
+    xref: 'x',
+    yref: 'y',
+    text: `β = ${beta.toFixed(2)}`,
+    showarrow: false,
+    font: {
+        size: 13,
+        color: '#222'
+    },
+    align: 'left',
+    bgcolor: 'rgba(250,249,244,0.85)',
+    borderpad: 4
+}] : []
                 
 
                         plot_bgcolor: '#faf9f4',
