@@ -1049,19 +1049,17 @@ const x = marketReturns.slice(-n);
 
                         const { alpha, beta } = linearRegression(x, y);
 
-                        const regX = [Math.min(...xPct), Math.max(...xPct)];
-                        const regY = regX.map(v => (alpha + beta * (v / 100)) * 100);
+const regX = [Math.min(...x), Math.max(...x)];
+const regY = regX.map(v => alpha + beta * v);
 
-                        traces.push({
-                            x: regX.map(v => v * 100),
-                            y: regY.map(v => v * 100),
-                            mode: 'lines',
-                            name: `Beta = ${beta.toFixed(2)}`,
-                            line: {
-                                color: '#222',
-                                width: 2
-                            }
-                        });
+traces.push({
+    x: regX.map(v => v * 100),
+    y: regY.map(v => v * 100),
+    mode: 'lines',
+    name: `Beta = ${beta.toFixed(2)}`,
+    line: { color: '#222', width: 2 }
+});
+                        
 
                         status.innerHTML =
                             `${stocks[ticker].name} • β = ${beta.toFixed(2)}`;
@@ -1089,9 +1087,7 @@ const x = marketReturns.slice(-n);
                         yaxis: {
                             title: `${stocks[ticker].name} Weekly Return (%)`,
                             zeroline: true,
-                            range: [-maxAbs, maxAbs],
-                            scaleanchor: "x",
-                            scaleratio: 1
+                            range: [-maxAbs, maxAbs]
                         },
                 
 
