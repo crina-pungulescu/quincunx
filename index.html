@@ -514,15 +514,15 @@
         <div style="display: flex; gap: 2rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
             <div id="btn-smci" class="stock-logo" data-ticker="SMCI" style="cursor: pointer; text-align: center; width: 100px;">
                 <img src="images/supermicro.png" alt="Super Micro" style="width: 80px; height: 80px; object-fit: contain; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Technology</div>
+                <div style="margin-top: 0.5rem; font-size: 0.8rem;">High Beta</div>
             </div>
             <div id="btn-nke" class="stock-logo" data-ticker="NKE" style="cursor: pointer; text-align: center; width: 100px;">
                 <img src="images/nike.png" alt="Nike" style="width: 80px; height: 80px; object-fit: contain; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Athletic Footwear</div>
+                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Market Beta</div>
             </div>
             <div id="btn-pg" class="stock-logo" data-ticker="PG" style="cursor: pointer; text-align: center; width: 100px;">
                 <img src="images/pg.png" alt="P&G" style="width: 80px; height: 80px; object-fit: contain; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Consumer Goods</div>
+                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Low Beta</div>
             </div>
         </div>
 
@@ -533,7 +533,7 @@
         </div>
 
         <!-- Chart container -->
-        <div id="capm-chart" style="height: 400px; margin-bottom: 1rem;"></div>
+        <div id="capm-chart" style="height: 450px; margin-bottom: 1rem;"></div>
         <div id="data-status" style="text-align: center; font-size: 0.9rem; font-family: var(--font-sans); color: var(--kicker);"></div>
     </div>
 
@@ -542,53 +542,38 @@
 
     <script>
         (function() {
-            // Stock info
             const stocks = {
-                SMCI: { name: 'Super Micro Computer', logo: 'supermicro.png' },
-                NKE: { name: 'Nike', logo: 'nike.png' },
-                PG: { name: 'Procter & Gamble', logo: 'pg.png' }
+                SMCI: { name: 'Super Micro Computer', file: 'data/SMCI.json' },
+                NKE: { name: 'Nike', file: 'data/NKE.json' },
+                PG: { name: 'Procter & Gamble', file: 'data/PG.json' }
             };
 
             let currentTicker = 'SMCI';
             let currentView = 'timeseries'; // 'timeseries' or 'histogram'
-            let cachedData = null; // { dates, weeklyReturns, cumulativeReturns }
+            let cachedData = null; // stores { dates, weeklyReturns, cumulativeReturns }
 
-            // Fetch weekly adjusted close from Yahoo Finance (5 years)
-            async function fetchWeeklyData(ticker) {
-                const now = new Date();
-                const end = Math.floor(now.getTime() / 1000);
-                const start = end - 5 * 365 * 24 * 3600; // 5 years ago
-                const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?period1=${start}&period2=${end}&interval=1wk`;
-                const response = await fetch(url, {
-                    headers: { 'User-Agent': 'Mozilla/5.0 (compatible; MyApp/1.0)' }
-                });
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const data = await response.json();
-                if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
-                    throw new Error('No data in response');
-                }
-                const result = data.chart.result[0];
-                const timestamps = result.timestamp;
-                const prices = result.indicators.quote[0].close;
-                // Filter out nulls
-                const valid = timestamps.reduce((acc, ts, i) => {
-                    if (prices[i] !== null && prices[i] !== undefined) {
-                        acc.dates.push(new Date(ts * 1000));
-                        acc.prices.push(prices[i]);
-                    }
-                    return acc;
-                }, { dates: [], prices: [] });
-                if (valid.prices.length < 2) throw new Error('Not enough price points');
-                return valid;
+            // Load JSON array of objects with Date and Close fields
+            async function loadStockData(ticker) {
+                const file = stocks[ticker].file;
+                const response = await fetch(file);
+                if (!response.ok) throw new Error(`Failed to load ${file}`);
+                const jsonArray = await response.json();
+                if (!Array.isArray(jsonArray) || jsonArray.length < 2) throw new Error('Invalid data format');
+                // Extract dates and close prices, assuming chronological order (oldest first)
+                const dates = jsonArray.map(item => new Date(item.Date));
+                const prices = jsonArray.map(item => item.Close);
+                // Verify no missing values
+                if (dates.some(d => isNaN(d.getTime()))) throw new Error('Invalid date format');
+                if (prices.some(p => typeof p !== 'number' || isNaN(p))) throw new Error('Invalid price format');
+                return { dates, prices };
             }
 
-            // Compute weekly returns (as decimals) and cumulative returns (in %)
+            // Compute weekly returns (simple) and cumulative returns (percentage)
             function computeReturns(prices) {
                 const weeklyReturns = [];
                 for (let i = 1; i < prices.length; i++) {
                     weeklyReturns.push((prices[i] - prices[i-1]) / prices[i-1]);
                 }
-                // Cumulative returns (percentage) starting from 0
                 const cumulative = [0];
                 for (let i = 1; i < prices.length; i++) {
                     cumulative.push(cumulative[i-1] + weeklyReturns[i-1] * 100);
@@ -639,15 +624,15 @@
                 Plotly.newPlot('capm-chart', [trace], layout);
             }
 
-            // Main load function
+            // Main load and display
             async function loadAndDisplay(ticker) {
                 const statusDiv = document.getElementById('data-status');
-                statusDiv.innerHTML = 'Loading data...';
+                statusDiv.innerHTML = `Loading ${stocks[ticker].name} data...`;
                 try {
-                    const { dates, prices } = await fetchWeeklyData(ticker);
+                    const { dates, prices } = await loadStockData(ticker);
                     const { weeklyReturns, cumulative } = computeReturns(prices);
                     cachedData = { dates, weeklyReturns, cumulative };
-                    statusDiv.innerHTML = `Data loaded for ${stocks[ticker].name} (${dates.length} weeks)`;
+                    statusDiv.innerHTML = `Data loaded: ${dates.length} weeks (${dates[0].toLocaleDateString()} – ${dates[dates.length-1].toLocaleDateString()})`;
                     if (currentView === 'timeseries') {
                         plotTimeSeries(dates, cumulative, ticker);
                     } else {
@@ -655,8 +640,7 @@
                     }
                 } catch (err) {
                     console.error(err);
-                    statusDiv.innerHTML = `Error: ${err.message}. Please check console or try again later.`;
-                    // Clear chart
+                    statusDiv.innerHTML = `Error: ${err.message}. Ensure JSON files are in 'data/' folder with fields 'Date' and 'Close'.`;
                     Plotly.newPlot('capm-chart', [], { title: 'Data unavailable' });
                 }
             }
@@ -686,7 +670,7 @@
                 });
             });
 
-            // Attach toggle buttons
+            // Toggle buttons
             document.getElementById('toggle-chart').addEventListener('click', () => {
                 document.getElementById('toggle-chart').style.background = 'var(--accent)';
                 document.getElementById('toggle-chart').style.color = 'white';
@@ -707,6 +691,9 @@
         })();
     </script>
 </section>
+
+
+
 
         
     
