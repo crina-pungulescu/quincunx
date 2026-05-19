@@ -503,6 +503,236 @@
                 </div>
             </div>
         </section>
+
+        <!-- SLIDE 10: Risk and Return Interactive Dashboard -->
+<section class="slide" data-audio-src="audio/slide10.mp3">
+    <div class="container">
+        <div class="kicker" style="color: var(--accent);">Returns and Volatility</div>
+        <h1 style="margin-bottom: 0.5rem;">Reward and Risk</h1>
+        <div class="subtitle" style="margin-bottom: 1.5rem;">Risk and Return in Action</div>
+
+        <!-- Stock selection cards -->
+        <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <div id="btn-smci" class="stock-btn" data-ticker="SMCI" style="cursor: pointer; text-align: center; padding: 0.5rem 1rem; background: #f4f2ea; border-radius: 12px; transition: all 0.2s; min-width: 100px;">
+                <div style="font-weight: bold;">Super Micro</div>
+                <div style="font-size: 0.8rem; color: var(--kicker);">High Beta</div>
+            </div>
+            <div id="btn-nke" class="stock-btn" data-ticker="NKE" style="cursor: pointer; text-align: center; padding: 0.5rem 1rem; background: #f4f2ea; border-radius: 12px; transition: all 0.2s; min-width: 100px;">
+                <div style="font-weight: bold;">Nike</div>
+                <div style="font-size: 0.8rem; color: var(--kicker);">Market Beta</div>
+            </div>
+            <div id="btn-pg" class="stock-btn" data-ticker="PG" style="cursor: pointer; text-align: center; padding: 0.5rem 1rem; background: #f4f2ea; border-radius: 12px; transition: all 0.2s; min-width: 100px;">
+                <div style="font-weight: bold;">P&G</div>
+                <div style="font-size: 0.8rem; color: var(--kicker);">Low Beta</div>
+            </div>
+        </div>
+
+        <!-- View toggle buttons -->
+        <div style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem;">
+            <button id="toggle-chart" style="background: var(--accent); border: none; padding: 0.3rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; color: white;">Time Series</button>
+            <button id="toggle-hist" style="background: #e0ddd5; border: none; padding: 0.3rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem;">Histogram</button>
+        </div>
+
+        <!-- Chart container -->
+        <div id="capm-chart" style="height: 400px; margin-bottom: 1rem;"></div>
+        <div id="beta-display" style="text-align: center; font-size: 1rem; margin-top: 0.5rem; font-family: var(--font-sans);"></div>
+    </div>
+
+    <!-- Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" charset="utf-8"></script>
+
+    <script>
+        (function() {
+            // Define stocks and market benchmark
+            const stocks = {
+                SMCI: { name: 'Super Micro Computer', betaCategory: 'High Beta' },
+                NKE: { name: 'Nike', betaCategory: 'Market Beta' },
+                PG: { name: 'Procter & Gamble', betaCategory: 'Low Beta' }
+            };
+            const marketTicker = '^GSPC';
+
+            let currentTicker = 'SMCI';
+            let currentView = 'timeseries'; // 'timeseries' or 'histogram'
+            let chartData = null; // cached { stockPoints, marketPoints }
+
+            // Fetch weekly data from Yahoo Finance (5 years)
+            async function fetchWeeklyData(ticker) {
+                const endDate = Math.floor(Date.now() / 1000);
+                const startDate = endDate - (5 * 365 * 24 * 60 * 60);
+                const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?period1=${startDate}&period2=${endDate}&interval=1wk`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (!data.chart?.result?.length) throw new Error(`No data for ${ticker}`);
+                const result = data.chart.result[0];
+                const timestamps = result.timestamp;
+                const prices = result.indicators.quote[0].close;
+                // Remove null prices
+                const valid = timestamps.reduce((acc, ts, idx) => {
+                    if (prices[idx] != null) {
+                        acc.timestamps.push(ts);
+                        acc.prices.push(prices[idx]);
+                    }
+                    return acc;
+                }, { timestamps: [], prices: [] });
+                return valid;
+            }
+
+            // Calculate weekly returns (percentage)
+            function calculateReturns(prices) {
+                const returns = [];
+                for (let i = 1; i < prices.length; i++) {
+                    returns.push((prices[i] - prices[i-1]) / prices[i-1]);
+                }
+                return returns;
+            }
+
+            // Calculate beta via linear regression
+            function calculateBeta(stockReturns, marketReturns) {
+                const n = stockReturns.length;
+                if (n === 0 || n !== marketReturns.length) return null;
+                let sumXY = 0, sumX = 0, sumY = 0, sumX2 = 0;
+                for (let i = 0; i < n; i++) {
+                    sumXY += stockReturns[i] * marketReturns[i];
+                    sumX += marketReturns[i];
+                    sumY += stockReturns[i];
+                    sumX2 += marketReturns[i] * marketReturns[i];
+                }
+                const denominator = sumX2 - (sumX * sumX) / n;
+                if (denominator === 0) return null;
+                return (sumXY - (sumX * sumY) / n) / denominator;
+            }
+
+            // Display cumulative returns time series
+            function displayWeeklyReturnsChart(ticker, stockPoints, marketPoints) {
+                const stockDates = stockPoints.timestamps.map(ts => new Date(ts * 1000).toISOString().split('T')[0]);
+                const marketDates = marketPoints.timestamps.map(ts => new Date(ts * 1000).toISOString().split('T')[0]);
+                const stockPrices = stockPoints.prices;
+                const marketPrices = marketPoints.prices;
+                const stockCum = stockPrices.map(p => (p - stockPrices[0]) / stockPrices[0] * 100);
+                const marketCum = marketPrices.map(p => (p - marketPrices[0]) / marketPrices[0] * 100);
+                
+                const traceStock = {
+                    x: stockDates,
+                    y: stockCum,
+                    mode: 'lines',
+                    name: stocks[ticker].name,
+                    line: { color: 'var(--accent)', width: 2 }
+                };
+                const traceMarket = {
+                    x: marketDates,
+                    y: marketCum,
+                    mode: 'lines',
+                    name: 'S&P 500',
+                    line: { color: '#8a7a6b', width: 2, dash: 'dot' }
+                };
+                const layout = {
+                    title: 'Cumulative Weekly Returns (%)',
+                    xaxis: { title: 'Date' },
+                    yaxis: { title: 'Cumulative Return (%)' },
+                    plot_bgcolor: '#faf9f4',
+                    paper_bgcolor: '#faf9f4',
+                    font: { family: 'Inter, -apple-system, sans-serif', color: '#2a2a28' }
+                };
+                Plotly.newPlot('capm-chart', [traceStock, traceMarket], layout);
+            }
+
+            // Display histogram of weekly returns
+            function displayHistogram(ticker, returns) {
+                const trace = {
+                    x: returns,
+                    type: 'histogram',
+                    name: stocks[ticker].name,
+                    marker: { color: 'var(--accent)' },
+                    opacity: 0.7,
+                    nbinsx: 30
+                };
+                const layout = {
+                    title: 'Distribution of Weekly Returns',
+                    xaxis: { title: 'Weekly Return' },
+                    yaxis: { title: 'Frequency' },
+                    plot_bgcolor: '#faf9f4',
+                    paper_bgcolor: '#faf9f4',
+                    font: { family: 'Inter, -apple-system, sans-serif', color: '#2a2a28' },
+                    bargap: 0.05
+                };
+                Plotly.newPlot('capm-chart', [trace], layout);
+            }
+
+            // Main load function
+            async function loadAndDisplay(ticker) {
+                const displayDiv = document.getElementById('beta-display');
+                displayDiv.innerHTML = 'Loading data...';
+                try {
+                    const [stockPoints, marketPoints] = await Promise.all([
+                        fetchWeeklyData(ticker),
+                        fetchWeeklyData(marketTicker)
+                    ]);
+                    chartData = { stockPoints, marketPoints };
+                    const stockReturns = calculateReturns(stockPoints.prices);
+                    const marketReturns = calculateReturns(marketPoints.prices);
+                    const minLen = Math.min(stockReturns.length, marketReturns.length);
+                    const alignedStock = stockReturns.slice(-minLen);
+                    const alignedMarket = marketReturns.slice(-minLen);
+                    const beta = calculateBeta(alignedStock, alignedMarket);
+                    const betaText = beta !== null ? beta.toFixed(2) : 'N/A';
+                    displayDiv.innerHTML = `${stocks[ticker].name} (${ticker})<br><strong style="font-size:1.2rem;">Beta: ${betaText}</strong>`;
+                    
+                    if (currentView === 'timeseries') {
+                        displayWeeklyReturnsChart(ticker, stockPoints, marketPoints);
+                    } else {
+                        displayHistogram(ticker, stockReturns);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    displayDiv.innerHTML = `Error loading data for ${ticker}. Check console.`;
+                }
+            }
+
+            function toggleView(view) {
+                currentView = view;
+                if (!chartData) {
+                    loadAndDisplay(currentTicker);
+                    return;
+                }
+                const { stockPoints, marketPoints } = chartData;
+                if (view === 'timeseries') {
+                    displayWeeklyReturnsChart(currentTicker, stockPoints, marketPoints);
+                } else {
+                    const returns = calculateReturns(stockPoints.prices);
+                    displayHistogram(currentTicker, returns);
+                }
+            }
+
+            // Attach event listeners
+            document.querySelectorAll('.stock-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const ticker = btn.getAttribute('data-ticker');
+                    if (ticker && ticker !== currentTicker) {
+                        currentTicker = ticker;
+                        loadAndDisplay(currentTicker);
+                    }
+                });
+            });
+            document.getElementById('toggle-chart').addEventListener('click', () => {
+                document.getElementById('toggle-chart').style.background = 'var(--accent)';
+                document.getElementById('toggle-chart').style.color = 'white';
+                document.getElementById('toggle-hist').style.background = '#e0ddd5';
+                document.getElementById('toggle-hist').style.color = '#2a2a28';
+                toggleView('timeseries');
+            });
+            document.getElementById('toggle-hist').addEventListener('click', () => {
+                document.getElementById('toggle-hist').style.background = 'var(--accent)';
+                document.getElementById('toggle-hist').style.color = 'white';
+                document.getElementById('toggle-chart').style.background = '#e0ddd5';
+                document.getElementById('toggle-chart').style.color = '#2a2a28';
+                toggleView('histogram');
+            });
+
+            // Initial load
+            loadAndDisplay(currentTicker);
+        })();
+    </script>
+</section>
     
 
     </div> <!-- closes slides-container -->
