@@ -504,7 +504,9 @@
             </div>
         </section>
 
-        <!-- SLIDE10: Histogram -->
+
+
+<!-- SLIDE10: Histogram -->
 <section class="slide" data-audio-src="audio/slide10.mp3">
     <div class="container">
         <div class="kicker" style="color: var(--accent);">Return and Volatility</div>
@@ -550,115 +552,195 @@
 
             let currentTicker = 'SMCI';
             let currentView = 'timeseries'; // 'timeseries' or 'histogram'
-            let cachedData = null; // stores { dates, weeklyReturns, cumulativeWealth }
+            let cachedData = null; // stores { dates, weeklyReturns, wealth }
 
             // Load JSON array of objects with Date and Close fields
             async function loadStockData(ticker) {
                 const file = stocks[ticker].file;
                 const response = await fetch(file);
-                if (!response.ok) throw new Error(`Failed to load ${file}`);
+
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${file}`);
+                }
+
                 const jsonArray = await response.json();
-                if (!Array.isArray(jsonArray) || jsonArray.length < 2) throw new Error('Invalid data format');
-                // Extract dates and close prices, assuming chronological order (oldest first)
-                const dates = jsonArray.map(item => new Date(item.Date));
-                const prices = jsonArray.map(item => item.Close);
+
+                if (!Array.isArray(jsonArray) || jsonArray.length < 2) {
+                    throw new Error('Invalid data format');
+                }
+
+                // Sort by date ascending to fix incorrect cumulative plots
+                const sorted = jsonArray
+                    .filter(item => item.Date && item.Close != null)
+                    .sort((a, b) => new Date(a.Date) - new Date(b.Date));
+
+                const dates = sorted.map(item => new Date(item.Date));
+                const prices = sorted.map(item => Number(item.Close));
+
                 // Validate
-                if (dates.some(d => isNaN(d.getTime()))) throw new Error('Invalid date format');
-                if (prices.some(p => typeof p !== 'number' || isNaN(p))) throw new Error('Invalid price format');
+                if (dates.some(d => isNaN(d.getTime()))) {
+                    throw new Error('Invalid date format');
+                }
+
+                if (prices.some(p => typeof p !== 'number' || isNaN(p))) {
+                    throw new Error('Invalid price format');
+                }
+
                 return { dates, prices };
             }
 
-            // Compute weekly returns (decimal) and cumulative wealth (starting at $100)
+            // Compute returns and cumulative wealth starting at $100
             function computeWealth(prices) {
                 const weeklyReturns = [];
+
                 for (let i = 1; i < prices.length; i++) {
-                    weeklyReturns.push((prices[i] - prices[i-1]) / prices[i-1]);
+                    weeklyReturns.push((prices[i] - prices[i - 1]) / prices[i - 1]);
                 }
-                // Cumulative wealth: start with $100
+
+                // Start with $100 invested
                 const wealth = [100];
+
                 for (let i = 1; i < prices.length; i++) {
-                    wealth.push(wealth[i-1] * (1 + weeklyReturns[i-1]));
+                    wealth.push(wealth[i - 1] * (1 + weeklyReturns[i - 1]));
                 }
+
                 return { weeklyReturns, wealth };
             }
 
-            // Plot time series of cumulative wealth ($)
+            // Plot time series of cumulative wealth
             function plotTimeSeries(dates, wealth, ticker, startDate, endDate) {
                 const trace = {
                     x: dates,
                     y: wealth,
                     mode: 'lines',
                     name: stocks[ticker].name,
-                    line: { color: 'var(--accent)', width: 2 }
+                    line: {
+                        color: '#8c1515',
+                        width: 2
+                    }
                 };
-                const title = `${stocks[ticker].name} – Cumulative Wealth ($100 initial) | ${startDate} to ${endDate}`;
+
                 const layout = {
-                    title: title,
-                    xaxis: { title: 'Date' },
-                    yaxis: { title: 'Portfolio Value ($)' },
+                    title: {
+                        text: `${stocks[ticker].name}<br><span style="font-size:0.8rem;">Growth of $100 Investment (${startDate} → ${endDate})</span>`,
+                        x: 0.5
+                    },
+                    xaxis: {
+                        title: 'Date'
+                    },
+                    yaxis: {
+                        title: 'Portfolio Value ($)',
+                        tickprefix: '$'
+                    },
                     plot_bgcolor: '#faf9f4',
                     paper_bgcolor: '#faf9f4',
-                    font: { family: 'Inter, -apple-system, sans-serif', color: '#2a2a28' }
+                    font: {
+                        family: 'Inter, -apple-system, sans-serif',
+                        color: '#2a2a28'
+                    },
+                    margin: {
+                        t: 80
+                    }
                 };
-                Plotly.newPlot('capm-chart', [trace], layout);
+
+                Plotly.newPlot('capm-chart', [trace], layout, { responsive: true });
             }
 
-            // Plot histogram of weekly returns (%)
+            // Plot histogram of returns
             function plotHistogram(weeklyReturns, ticker, startDate, endDate) {
                 const returnsPercent = weeklyReturns.map(r => r * 100);
+
                 const trace = {
                     x: returnsPercent,
                     type: 'histogram',
                     name: stocks[ticker].name,
-                    marker: { color: 'var(--accent)' },
-                    opacity: 0.7,
+                    marker: {
+                        color: '#8c1515'
+                    },
+                    opacity: 0.75,
                     nbinsx: 30
                 };
-                const title = `${stocks[ticker].name} – Distribution of Weekly Returns (%) | ${startDate} to ${endDate}`;
+
                 const layout = {
-                    title: title,
-                    xaxis: { title: 'Weekly Return (%)' },
-                    yaxis: { title: 'Frequency' },
+                    title: {
+                        text: `${stocks[ticker].name}<br><span style="font-size:0.8rem;">Distribution of Weekly Returns (${startDate} → ${endDate})</span>`,
+                        x: 0.5
+                    },
+                    xaxis: {
+                        title: 'Weekly Return (%)'
+                    },
+                    yaxis: {
+                        title: 'Frequency'
+                    },
                     plot_bgcolor: '#faf9f4',
                     paper_bgcolor: '#faf9f4',
-                    font: { family: 'Inter, -apple-system, sans-serif', color: '#2a2a28' },
-                    bargap: 0.05
+                    font: {
+                        family: 'Inter, -apple-system, sans-serif',
+                        color: '#2a2a28'
+                    },
+                    bargap: 0.05,
+                    margin: {
+                        t: 80
+                    }
                 };
-                Plotly.newPlot('capm-chart', [trace], layout);
+
+                Plotly.newPlot('capm-chart', [trace], layout, { responsive: true });
             }
 
             // Main load and display
             async function loadAndDisplay(ticker) {
                 const statusDiv = document.getElementById('data-status');
+
                 statusDiv.innerHTML = `Loading ${stocks[ticker].name} data...`;
+
                 try {
                     const { dates, prices } = await loadStockData(ticker);
+
                     const { weeklyReturns, wealth } = computeWealth(prices);
-                    cachedData = { dates, weeklyReturns, wealth };
+
+                    cachedData = {
+                        dates,
+                        weeklyReturns,
+                        wealth
+                    };
+
                     const startDate = dates[0].toLocaleDateString();
-                    const endDate = dates[dates.length-1].toLocaleDateString();
-                    statusDiv.innerHTML = `Data: ${dates.length} weeks (${startDate} – ${endDate})`;
+                    const endDate = dates[dates.length - 1].toLocaleDateString();
+
+                    statusDiv.innerHTML =
+                        `${stocks[ticker].name} • ${dates.length} observations • ${startDate} – ${endDate}`;
+
                     if (currentView === 'timeseries') {
                         plotTimeSeries(dates, wealth, ticker, startDate, endDate);
                     } else {
                         plotHistogram(weeklyReturns, ticker, startDate, endDate);
                     }
+
                 } catch (err) {
                     console.error(err);
-                    statusDiv.innerHTML = `Error: ${err.message}. Ensure JSON files are in 'data/' folder with fields 'Date' and 'Close'.`;
-                    Plotly.newPlot('capm-chart', [], { title: 'Data unavailable' });
+
+                    statusDiv.innerHTML =
+                        `Error: ${err.message}. Ensure JSON files are in the 'data/' folder with valid 'Date' and 'Close' fields.`;
+
+                    Plotly.newPlot('capm-chart', [], {
+                        title: 'Data unavailable'
+                    });
                 }
             }
 
             function toggleView(view) {
                 currentView = view;
+
                 if (!cachedData) {
                     loadAndDisplay(currentTicker);
                     return;
                 }
+
                 const { dates, weeklyReturns, wealth } = cachedData;
+
                 const startDate = dates[0].toLocaleDateString();
-                const endDate = dates[dates.length-1].toLocaleDateString();
+                const endDate = dates[dates.length - 1].toLocaleDateString();
+
                 if (view === 'timeseries') {
                     plotTimeSeries(dates, wealth, currentTicker, startDate, endDate);
                 } else {
@@ -670,6 +752,7 @@
             document.querySelectorAll('.stock-logo').forEach(el => {
                 el.addEventListener('click', () => {
                     const ticker = el.getAttribute('data-ticker');
+
                     if (ticker && ticker !== currentTicker) {
                         currentTicker = ticker;
                         loadAndDisplay(currentTicker);
@@ -681,20 +764,26 @@
             document.getElementById('toggle-chart').addEventListener('click', () => {
                 document.getElementById('toggle-chart').style.background = 'var(--accent)';
                 document.getElementById('toggle-chart').style.color = 'white';
+
                 document.getElementById('toggle-hist').style.background = '#e0ddd5';
                 document.getElementById('toggle-hist').style.color = '#2a2a28';
+
                 toggleView('timeseries');
             });
+
             document.getElementById('toggle-hist').addEventListener('click', () => {
                 document.getElementById('toggle-hist').style.background = 'var(--accent)';
                 document.getElementById('toggle-hist').style.color = 'white';
+
                 document.getElementById('toggle-chart').style.background = '#e0ddd5';
                 document.getElementById('toggle-chart').style.color = '#2a2a28';
+
                 toggleView('histogram');
             });
 
             // Initial load
             loadAndDisplay(currentTicker);
+
         })();
     </script>
 </section>
@@ -702,7 +791,6 @@
 
 
 
-        
 
        
 
