@@ -1081,13 +1081,17 @@ traces.push({
                         xaxis: {
                             title: 'S&P 500 Weekly Return (%)',
                             zeroline: true,
-                            range: [-maxAbs, maxAbs]
+                            range: [-maxAbs, maxAbs],
+                            constrain: 'domain'
                         },
 
                         yaxis: {
                             title: `${stocks[ticker].name} Weekly Return (%)`,
                             zeroline: true,
-                            range: [-maxAbs, maxAbs]
+                            range: [-maxAbs, maxAbs],
+                            scaleanchor: 'x',
+                            scaleratio: 1,
+                            constrain: 'domain'
                         },
                 
 
@@ -1099,8 +1103,10 @@ traces.push({
                             color: '#2a2a28'
                         },
 
+                        autosize: true,
+
                         margin: {
-                            t: 80
+                            t: 80, r: 40, b: 60, l: 60 
                         }
                     };
 
