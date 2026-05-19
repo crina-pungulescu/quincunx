@@ -1033,8 +1033,8 @@
 
             // FIX: paper-space annotation (immune to axis scaling issues)
             layout.annotations = [{
-                x: 0.85,
-                y: 0.85,
+                x: 0.75,
+                y: 0.75,
                 xref: 'paper',
                 yref: 'paper',
                 text: `β = ${beta.toFixed(2)}`,
@@ -1044,11 +1044,9 @@
                 borderpad: 4
             }];
 
-            status.innerHTML = `${stocks[ticker].name} • β = ${beta.toFixed(2)}`;
+            
 
-        } else {
-            status.innerHTML = `${stocks[ticker].name} vs S&P 500`;
-        }
+        } 
 
         Plotly.newPlot('beta-chart', traces, layout, {
             responsive: true,
