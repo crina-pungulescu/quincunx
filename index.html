@@ -808,6 +808,7 @@
     </script>
 </section>
 
+        
 
         <!-- SLIDE11: CAPM Scatter Plot -->
 <section class="slide" data-audio-src="audio/slide11.mp3">
@@ -838,6 +839,26 @@
 
         </div>
 
+        <!-- Time horizon buttons -->
+<div style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1.5rem;">
+
+    <button class="range-btn" data-range="1"
+        style="background: #e0ddd5; border: none; padding: 0.35rem 0.9rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem;">
+        1Y
+    </button>
+
+    <button class="range-btn" data-range="5"
+        style="background: #e0ddd5; border: none; padding: 0.35rem 0.9rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem;">
+        5Y
+    </button>
+
+    <button class="range-btn" data-range="10"
+        style="background: var(--accent); color: white; border: none; padding: 0.35rem 0.9rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem;">
+        10Y
+    </button>
+
+</div>
+
         <!-- Beta toggle -->
         <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
             <button id="toggle-beta"
@@ -854,6 +875,10 @@
         </div>
     </div>
 
+
+    let currentRange = 10;
+
+    
     <!-- Plotly -->
     <script src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
 
@@ -960,18 +985,32 @@
 
                     status.innerHTML = `Loading ${stocks[ticker].name}...`;
 
-                    // Load company + SP500
-                    const stockData = await loadStockData(ticker);
-                    const marketData = await loadStockData('SP500');
+                   const stockReturns = computeReturns(stockData.prices);
+const marketReturns = computeReturns(marketData.prices);
 
-                    const stockReturns = computeReturns(stockData.prices);
-                    const marketReturns = computeReturns(marketData.prices);
+// Approximate weekly observations
+const observationsPerYear = 52;
 
-                    // Match shortest length
-                    const n = Math.min(stockReturns.length, marketReturns.length);
+let maxPoints;
 
-                    const y = stockReturns.slice(0, n);
-                    const x = marketReturns.slice(0, n);
+if (currentRange === 1) {
+    maxPoints = 1 * observationsPerYear;
+} else if (currentRange === 5) {
+    maxPoints = 5 * observationsPerYear;
+} else {
+    maxPoints = 10 * observationsPerYear;
+}
+
+// Match shortest length
+const n = Math.min(
+    stockReturns.length,
+    marketReturns.length,
+    maxPoints
+);
+
+// Use most recent observations
+const y = stockReturns.slice(-n);
+const x = marketReturns.slice(-n);
 
                     const scatterTrace = {
                         x: x.map(v => v * 100),
@@ -1094,11 +1133,11 @@
                     if (showBeta) {
                         btn.style.background = 'var(--accent)';
                         btn.style.color = 'white';
-                        btn.innerHTML = 'Hide Beta Line';
+                        btn.innerHTML = 'Hide Regression Line';
                     } else {
                         btn.style.background = '#e0ddd5';
                         btn.style.color = '#2a2a28';
-                        btn.innerHTML = 'Show Beta Line';
+                        btn.innerHTML = 'Show Regression Line';
                     }
 
                     createScatterPlot(currentTicker);
