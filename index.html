@@ -1018,12 +1018,19 @@ const n = Math.min(
 const y = stockReturns.slice(-n);
 const x = marketReturns.slice(-n);
 
-                    const maxAbs = Math.max(
-    Math.abs(Math.min(...x.map(v => v * 100))),
-    Math.abs(Math.max(...x.map(v => v * 100))),
-    Math.abs(Math.min(...y.map(v => v * 100))),
-    Math.abs(Math.max(...y.map(v => v * 100)))
+// Convert to percent ONCE
+const yPct = y.map(v => v * 100);
+const xPct = x.map(v => v * 100);
+
+// Compute symmetric axis limit
+const maxAbs = Math.max(
+    ...xPct.map(Math.abs),
+    ...yPct.map(Math.abs)
 );
+                
+
+
+
 
                     const scatterTrace = {
                         x: x.map(v => v * 100),
