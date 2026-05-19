@@ -880,7 +880,9 @@
     <script src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
 
 
-<script>
+
+
+    <script>
 (function () {
 
     const stocks = {
@@ -956,7 +958,6 @@
         const xRaw = x.slice(-n);
         const yRaw = y.slice(-n);
 
-        // ✔ FIX: convert to percent BEFORE regression
         const xPct = xRaw.map(v => v * 100);
         const yPct = yRaw.map(v => v * 100);
 
@@ -974,44 +975,7 @@
             }
         }];
 
-        let annotation = [];
-
-        if (showBeta) {
-
-            // ✔ FIX: regression in percent space (fully consistent)
-            const { alpha, beta } = linearRegression(xPct, yPct);
-
-            const xLine = [-maxAbs, maxAbs];
-            const yLine = xLine.map(v => alpha + beta * v);
-
-            traces.push({
-                x: xLine,
-                y: yLine,
-                mode: 'lines',
-                line: { color: '#222', width: 2 },
-                hoverinfo: 'skip',
-                showlegend: false
-            });
-
-            // ✔ FIX: ALWAYS visible β (stable placement)
-            annotation = [{
-                x: maxAbs * 0.85,
-                y: alpha + beta * (maxAbs * 0.85),
-                text: `β = ${beta.toFixed(2)}`,
-                showarrow: false,
-                font: { size: 14, color: '#222' },
-                bgcolor: 'rgba(250,249,244,0.9)',
-                borderpad: 4
-            }];
-
-            status.innerHTML = `${stocks[ticker].name} • β = ${beta.toFixed(2)}`;
-
-        } else {
-            status.innerHTML = `${stocks[ticker].name} vs S&P 500`;
-        }
-
         const layout = {
-
             title: {
                 text: `${stocks[ticker].name} vs S&P 500<br><span style="font-size:0.8rem;">CAPM: Weekly Returns</span>`,
                 x: 0.5
@@ -1033,7 +997,8 @@
                 zeroline: true
             },
 
-            annotations: annotation,
+            // FIX: stable annotation in paper space (never clipped)
+            annotations: [],
 
             plot_bgcolor: '#faf9f4',
             paper_bgcolor: '#faf9f4',
@@ -1049,6 +1014,41 @@
 
             autosize: true
         };
+
+        if (showBeta) {
+
+            const { alpha, beta } = linearRegression(xPct, yPct);
+
+            const xLine = [-maxAbs, maxAbs];
+            const yLine = xLine.map(v => alpha + beta * v);
+
+            traces.push({
+                x: xLine,
+                y: yLine,
+                mode: 'lines',
+                line: { color: '#222', width: 2 },
+                hoverinfo: 'skip',
+                showlegend: false
+            });
+
+            // FIX: paper-space annotation (immune to axis scaling issues)
+            layout.annotations = [{
+                x: 0.85,
+                y: 0.85,
+                xref: 'paper',
+                yref: 'paper',
+                text: `β = ${beta.toFixed(2)}`,
+                showarrow: false,
+                font: { size: 14, color: '#222' },
+                bgcolor: 'rgba(250,249,244,0.9)',
+                borderpad: 4
+            }];
+
+            status.innerHTML = `${stocks[ticker].name} • β = ${beta.toFixed(2)}`;
+
+        } else {
+            status.innerHTML = `${stocks[ticker].name} vs S&P 500`;
+        }
 
         Plotly.newPlot('beta-chart', traces, layout, {
             responsive: true,
@@ -1101,8 +1101,6 @@
 })();
 </script>
 
-   
-       
 </section>
 
 
