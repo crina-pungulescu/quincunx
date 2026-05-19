@@ -1061,9 +1061,21 @@
     });
 
     document.getElementById('toggle-beta').addEventListener('click', () => {
-        showBeta = !showBeta;
-        createScatterPlot(currentTicker);
-    });
+
+    showBeta = !showBeta;
+
+    const btn = document.getElementById('toggle-beta');
+
+    if (showBeta) {
+        btn.style.background = 'var(--accent)';
+        btn.style.color = 'white';
+    } else {
+        btn.style.background = '#e0ddd5';
+        btn.style.color = '#2a2a28';
+    }
+
+    createScatterPlot(currentTicker);
+});
 
     document.querySelectorAll('.range-btn').forEach(btn => {
         btn.addEventListener('click', () => {
