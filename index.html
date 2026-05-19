@@ -879,347 +879,214 @@
     <!-- Plotly -->
     <script src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
 
+
     <script>
-        (function () {
+(function () {
 
-            const stocks = {
-                SMCI: {
-                    name: 'Super Micro Computer',
-                    file: 'data/SMCI.json',
-                    color: '#2ca02c'
-                },
-                NKE: {
-                    name: 'Nike',
-                    file: 'data/NKE.json',
-                    color: '#ff7f0e'
-                },
-                PG: {
-                    name: 'Procter & Gamble',
-                    file: 'data/PG.json',
-                    color: '#1f77b4'
-                },
-                SP500: {
-                    name: 'S&P 500 Index',
-                    file: 'data/SP500.json'
-                }
-            };
+    const stocks = {
+        SMCI: { name: 'Super Micro Computer', file: 'data/SMCI.json', color: '#2ca02c' },
+        NKE:  { name: 'Nike', file: 'data/NKE.json', color: '#ff7f0e' },
+        PG:   { name: 'Procter & Gamble', file: 'data/PG.json', color: '#1f77b4' },
+        SP500:{ name: 'S&P 500 Index', file: 'data/SP500.json' }
+    };
 
-            
+    let currentTicker = 'SMCI';
+    let showBeta = false;
+    let currentRange = 10;
 
-            let currentTicker = 'SMCI';
-            let showBeta = false;
-            let currentRange = 10;
+    function excelDateToJSDate(serial) {
+        return new Date((serial - 25569) * 86400 * 1000);
+    }
 
-            // Excel serial date conversion
-            function excelDateToJSDate(serial) {
-                return new Date((serial - 25569) * 86400 * 1000);
+    async function loadStockData(ticker) {
+        const res = await fetch(stocks[ticker].file);
+        if (!res.ok) throw new Error(`Failed to load ${ticker}`);
+
+        const json = await res.json();
+
+        const sorted = json
+            .filter(d => d.Date && d.Close)
+            .sort((a, b) => Number(a.Date) - Number(b.Date));
+
+        return {
+            prices: sorted.map(d => Number(d.Close))
+        };
+    }
+
+    function computeReturns(prices) {
+        const r = [];
+        for (let i = 1; i < prices.length; i++) {
+            r.push((prices[i] / prices[i - 1]) - 1);
+        }
+        return r;
+    }
+
+    function linearRegression(x, y) {
+        const n = x.length;
+
+        const meanX = x.reduce((a,b)=>a+b,0)/n;
+        const meanY = y.reduce((a,b)=>a+b,0)/n;
+
+        let num = 0, den = 0;
+
+        for (let i=0;i<n;i++){
+            num += (x[i]-meanX)*(y[i]-meanY);
+            den += (x[i]-meanX)**2;
+        }
+
+        const beta = num/den;
+        const alpha = meanY - beta*meanX;
+
+        return { alpha, beta };
+    }
+
+    async function createScatterPlot(ticker) {
+
+        const status = document.getElementById('beta-status');
+
+        status.innerHTML = `Loading ${stocks[ticker].name}...`;
+
+        const stock = await loadStockData(ticker);
+        const market = await loadStockData('SP500');
+
+        const y = computeReturns(stock.prices);
+        const x = computeReturns(market.prices);
+
+        const n = Math.min(y.length, x.length, currentRange * 52);
+
+        const xRaw = x.slice(-n);
+        const yRaw = y.slice(-n);
+
+        const xPct = xRaw.map(v => v * 100);
+        const yPct = yRaw.map(v => v * 100);
+
+        const maxAbs = Math.max(...xPct, ...yPct) || 1;
+
+        const traces = [{
+            x: xPct,
+            y: yPct,
+            mode: 'markers',
+            type: 'scatter',
+            marker: {
+                size: 7,
+                opacity: 0.65,
+                color: stocks[ticker].color
             }
+        }];
 
-            // Load stock data
-            async function loadStockData(ticker) {
+        let annotation = [];
 
-                const response = await fetch(stocks[ticker].file);
+        if (showBeta) {
 
-                if (!response.ok) {
-                    throw new Error(`Failed to load ${ticker}`);
-                }
+            const { alpha, beta } = linearRegression(xRaw, yRaw);
 
-                const json = await response.json();
+            const xLine = [-maxAbs, maxAbs];
+            const yLine = xLine.map(v => (alpha + beta * (v/100)) * 100);
 
-                const sorted = json
-                    .filter(d => d.Date != null && d.Close != null)
-                    .sort((a, b) => Number(a.Date) - Number(b.Date));
-
-                const dates = sorted.map(d =>
-                    excelDateToJSDate(Number(d.Date))
-                );
-
-                const prices = sorted.map(d =>
-                    Number(d.Close)
-                );
-
-                return { dates, prices };
-            }
-
-            // Compute returns
-            function computeReturns(prices) {
-
-                const returns = [];
-
-                for (let i = 1; i < prices.length; i++) {
-                    returns.push(
-                        (prices[i] - prices[i - 1]) / prices[i - 1]
-                    );
-                }
-
-                return returns;
-            }
-
-            // Regression coefficients
-            function linearRegression(x, y) {
-
-                const n = x.length;
-
-                const meanX = x.reduce((a, b) => a + b, 0) / n;
-                const meanY = y.reduce((a, b) => a + b, 0) / n;
-
-                let numerator = 0;
-                let denominator = 0;
-
-                for (let i = 0; i < n; i++) {
-                    numerator += (x[i] - meanX) * (y[i] - meanY);
-                    denominator += (x[i] - meanX) ** 2;
-                }
-
-                const beta = numerator / denominator;
-                const alpha = meanY - beta * meanX;
-
-                return { alpha, beta };
-            }
-
-            async function createScatterPlot(ticker) {
-
-                const status = document.getElementById('beta-status');
-
-                try {
-
-                    status.innerHTML = `Loading ${stocks[ticker].name}...`;
-
-                   
-
-const stockData = await loadStockData(ticker);
-const marketData = await loadStockData('SP500');
-
-const stockReturns = computeReturns(stockData.prices);
-const marketReturns = computeReturns(marketData.prices);
-
-
-// Approximate weekly observations
-const observationsPerYear = 52;
-
-let maxPoints;
-
-if (currentRange === 1) {
-    maxPoints = 1 * observationsPerYear;
-} else if (currentRange === 5) {
-    maxPoints = 5 * observationsPerYear;
-} else {
-    maxPoints = 10 * observationsPerYear;
-}
-
-// Match shortest length
-const n = Math.min(
-    stockReturns.length,
-    marketReturns.length,
-    maxPoints
-);
-
-// Use most recent observations
-const y = stockReturns.slice(-n);
-const x = marketReturns.slice(-n);
-
-                    const xPct = x.map(v => v * 100);
-                    const yPct = y.map(v => v * 100);
-
-                    const all = xPct.concat(yPct).filter(v => isFinite(v));
-
-                    const maxAbs = Math.max(...all.map(Math.abs)) || 1;
-                
-
-
-
-
-                    const scatterTrace = {
-                        x: xPct,
-                        y: yPct,
-                        mode: 'markers',
-                        type: 'scatter',
-                        name: stocks[ticker].name,
-                        marker: {
-                            color: stocks[ticker].color,
-                            size: 8,
-                            opacity: 0.7
-                        }
-                    };
-
-                    const traces = [scatterTrace];
-
-                    // Add regression line if enabled
-                    if (showBeta) {
-
-
-                        const { alpha, beta } = linearRegression(xPct, yPct);
-
-const regX = [Math.min(...xPct), Math.max(...xPct)];
-const regY = regX.map(v => alpha + beta * v);
-
-traces.push({
-    x: regX,
-    y: regY,
-    mode: 'lines',
-    showlegend: false,
-    line: { color: '#222', width: 2 }
-});
-                        
-
-                        status.innerHTML =
-                            `${stocks[ticker].name} • β = ${beta.toFixed(2)}`;
-
-                    } else {
-
-                        status.innerHTML =
-                            `${stocks[ticker].name} vs S&P 500`;
-
-                    }
-
-                    const layout = {
-
-                        title: {
-                            text: `${stocks[ticker].name} vs S&P 500<br><span style="font-size:0.8rem;">Weekly Returns Scatter Plot</span>`,
-                            x: 0.5
-                        },
-
-                        xaxis: {
-                            title: 'S&P 500 Weekly Return (%)',
-                            zeroline: true,
-                            range: [-maxAbs, maxAbs],
-                            automargin: true,
-                            fixedrange: false
-                            
-                        },
-
-                        yaxis: {
-                            title: `${stocks[ticker].name} Weekly Return (%)`,
-                            zeroline: true,
-                            range: [-maxAbs, maxAbs],
-                            scaleanchor: 'x',
-                            scaleratio: 1,
-                            automargin: true,
-                            fixedrange: false
-                        
-                        },
-
-                        annotations: showBeta ? [{
-    x: regX[1],
-    y: regY[1],
-    xref: 'x',
-    yref: 'y',
-    text: `β = ${beta.toFixed(2)}`,
-    showarrow: true,
-    arrowhead: 2,
-    ax: 10,
-    ay: -10,
-    font: {
-        size: 13,
-        color: '#222'
-    },
-    bgcolor: 'rgba(250,249,244,0.95)',
-    borderpad: 6,
-    bordercolor: '#ddd',
-    borderwidth: 1
-}] : [],
-
-                       
-
-                        
-                
-
-                        plot_bgcolor: '#faf9f4',
-                        paper_bgcolor: '#faf9f4',
-
-                        font: {
-                            family: 'Inter, -apple-system, sans-serif',
-                            color: '#2a2a28'
-                        },
-
-                        autosize: true,
-
-                        margin: {
-                            t: 80, r: 40, b: 60, l: 60 
-                        }
-                    };
-
-                    Plotly.newPlot(
-                        'beta-chart',
-                        traces,
-                        layout,
-                        { responsive: true }
-                    );
-
-                } catch (err) {
-
-                    console.error(err);
-
-                    status.innerHTML = `Error: ${err.message}`;
-
-                    Plotly.newPlot('beta-chart', [], {
-                        title: 'Data unavailable'
-                    });
-                }
-            }
-
-            // Company buttons
-            document.querySelectorAll('.stock-logo').forEach(el => {
-
-                el.addEventListener('click', () => {
-
-                    const ticker = el.getAttribute('data-ticker');
-
-                    if (ticker !== 'SP500') {
-                        currentTicker = ticker;
-                        createScatterPlot(currentTicker);
-                    }
-                });
+            traces.push({
+                x: xLine,
+                y: yLine,
+                mode: 'lines',
+                line: { color: '#222', width: 2 },
+                hoverinfo: 'skip',
+                showlegend: false
             });
 
-            // Beta toggle
-            document.getElementById('toggle-beta')
-                .addEventListener('click', () => {
+            annotation = [{
+                x: maxAbs * 0.6,
+                y: (alpha + beta * (maxAbs*0.6/100)) * 100,
+                text: `β = ${beta.toFixed(2)}`,
+                showarrow: false,
+                font: { size: 14, color: '#222' },
+                bgcolor: 'rgba(250,249,244,0.9)',
+                borderpad: 4
+            }];
 
-                    showBeta = !showBeta;
+            status.innerHTML = `${stocks[ticker].name} • β = ${beta.toFixed(2)}`;
+        } else {
+            status.innerHTML = `${stocks[ticker].name} vs S&P 500`;
+        }
 
-                    const btn = document.getElementById('toggle-beta');
+        const layout = {
 
-                    if (showBeta) {
-                        btn.style.background = 'var(--accent)';
-                        btn.style.color = 'white';
-                        btn.innerHTML = 'Regression Line';
-                    } else {
-                        btn.style.background = '#e0ddd5';
-                        btn.style.color = '#2a2a28';
-                        btn.innerHTML = 'Regression Line';
-                    }
+            title: {
+                text: `${stocks[ticker].name} vs S&P 500<br><span style="font-size:0.8rem;">CAPM: Weekly Returns</span>`,
+                x: 0.5
+            },
 
-                    createScatterPlot(currentTicker);
-                });
+            showlegend: false,
 
-            // Range buttons
-document.querySelectorAll('.range-btn').forEach(btn => {
+            xaxis: {
+                title: 'S&P 500 Weekly Return (%)',
+                range: [-maxAbs, maxAbs],
+                zeroline: true,
+                scaleanchor: 'y',
+                scaleratio: 1
+            },
 
-    btn.addEventListener('click', () => {
+            yaxis: {
+                title: `${stocks[ticker].name} Weekly Return (%)`,
+                range: [-maxAbs, maxAbs],
+                zeroline: true
+            },
 
-        currentRange = Number(btn.getAttribute('data-range'));
+            annotations: annotation,
 
-        // Reset styles
-        document.querySelectorAll('.range-btn').forEach(b => {
-            b.style.background = '#e0ddd5';
-            b.style.color = '#2a2a28';
+            plot_bgcolor: '#faf9f4',
+            paper_bgcolor: '#faf9f4',
+
+            font: {
+                family: 'Inter, -apple-system, sans-serif',
+                color: '#2a2a28'
+            },
+
+            margin: {
+                t: 80, r: 20, l: 20, b: 60
+            },
+
+            autosize: true
+        };
+
+        Plotly.newPlot('beta-chart', traces, layout, {
+            responsive: true,
+            displayModeBar: false
         });
+    }
 
-        // Highlight active button
-        btn.style.background = 'var(--accent)';
-        btn.style.color = 'white';
+    document.querySelectorAll('.stock-logo').forEach(el => {
+        el.addEventListener('click', () => {
+            currentTicker = el.dataset.ticker;
+            createScatterPlot(currentTicker);
+        });
+    });
 
+    document.getElementById('toggle-beta').addEventListener('click', () => {
+        showBeta = !showBeta;
         createScatterPlot(currentTicker);
     });
 
-});
+    document.querySelectorAll('.range-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentRange = Number(btn.dataset.range);
 
-            // Initial plot
+            document.querySelectorAll('.range-btn').forEach(b => {
+                b.style.background = '#e0ddd5';
+                b.style.color = '#2a2a28';
+            });
+
+            btn.style.background = 'var(--accent)';
+            btn.style.color = 'white';
+
             createScatterPlot(currentTicker);
+        });
+    });
 
-        })();
-    </script>
+    createScatterPlot(currentTicker);
+
+})();
+</script>
+
+       
 </section>
 
 
