@@ -976,7 +976,7 @@
 
         const layout = {
             title: {
-                text: `${stocks[ticker].name} vs S&P 500<br><span style="font-size:0.8rem;">CAPM: Weekly Returns</span>`,
+                text: `${stocks[ticker].name}: : Sensitivity to Market Movements`,
                 x: 0.5
             },
 
@@ -1032,7 +1032,7 @@
 
             // FIX: paper-space annotation (immune to axis scaling issues)
             layout.annotations = [{
-                x: 0.85,
+                x: 0.75,
                 y: 0.85,
                 xref: 'paper',
                 yref: 'paper',
@@ -1043,7 +1043,7 @@
                 borderpad: 4
             }];
 
-            status.innerHTML = `${stocks[ticker].name} • β = ${beta.toFixed(2)}`;
+            status.innerHTML = `${stocks[ticker].name} vs S&P 500`;
 
         } else {
             status.innerHTML = `${stocks[ticker].name} vs S&P 500`;
