@@ -1031,20 +1031,7 @@
                 showlegend: false
             });
 
-            // FIX: paper-space annotation (immune to axis scaling issues)
-            layout.annotations = [{
-                x: 0.75,
-                y: 2 * beta,
-                xref: 'paper',
-                yref: 'paper',
-                text: `β = ${beta.toFixed(2)}`,
-                showarrow: false,
-                font: { size: 14, color: '#222' },
-                bgcolor: 'rgba(250,249,244,0.9)',
-                borderpad: 4
-            }];
-
-            statusDiv.innerHTML = ``
+            statusDiv.innerHTML = `β = ${beta.toFixed(2)}`
 
         } 
 
