@@ -882,7 +882,7 @@
 
 
 
-    <script>
+<script>
 (function () {
 
     const stocks = {
@@ -941,6 +941,30 @@
 
         return { alpha, beta };
     }
+
+    function correlation(x, y) {
+
+    const n = x.length;
+
+    const meanX = x.reduce((a,b)=>a+b,0) / n;
+    const meanY = y.reduce((a,b)=>a+b,0) / n;
+
+    let num = 0;
+    let denX = 0;
+    let denY = 0;
+
+    for (let i = 0; i < n; i++) {
+
+        const dx = x[i] - meanX;
+        const dy = y[i] - meanY;
+
+        num += dx * dy;
+        denX += dx * dx;
+        denY += dy * dy;
+    }
+
+    return num / Math.sqrt(denX * denY);
+}
 
     async function createScatterPlot(ticker) {
 
@@ -1019,6 +1043,8 @@
 
             const { alpha, beta } = linearRegression(xPct, yPct);
 
+            const rho = correlation(xPct, yPct);
+
             const xLine = [-maxAbs, maxAbs];
             const yLine = xLine.map(v => alpha + beta * v);
 
@@ -1031,9 +1057,24 @@
                 showlegend: false
             });
 
-            statusDiv.innerHTML = `β = ${beta.toFixed(2)}`
+            // FIX: paper-space annotation (immune to axis scaling issues)
+            layout.annotations = [{
+                x: 0.75,
+                y: 0.85,
+                xref: 'paper',
+                yref: 'paper',
+                text: `β = ${beta.toFixed(2)`,
+                showarrow: false,
+                font: { size: 14, color: '#222' },
+                bgcolor: 'rgba(250,249,244,0.9)',
+                borderpad: 4
+            }];
 
-        } 
+            status.innerHTML = `y = ${alpha.toFixed(2)} + ${beta.toFixed(2)} x`;
+
+        } else {
+            status.innerHTML = `ρ = ${rho.toFixed(2)}`;
+        }
 
         Plotly.newPlot('beta-chart', traces, layout, {
             responsive: true,
@@ -1085,6 +1126,7 @@
 
 })();
 </script>
+
 
 </section>
 
