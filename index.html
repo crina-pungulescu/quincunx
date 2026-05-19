@@ -554,40 +554,69 @@
             let currentView = 'timeseries'; // 'timeseries' or 'histogram'
             let cachedData = null; // stores { dates, weeklyReturns, wealth }
 
-            // Load JSON array of objects with Date and Close fields
-            async function loadStockData(ticker) {
-                const file = stocks[ticker].file;
-                const response = await fetch(file);
+   
+            // Load JSON array of objects with Excel serial dates and Close fields
+async function loadStockData(ticker) {
+    const file = stocks[ticker].file;
+    const response = await fetch(file);
 
-                if (!response.ok) {
-                    throw new Error(`Failed to load ${file}`);
-                }
+    if (!response.ok) {
+        throw new Error(`Failed to load ${file}`);
+    }
 
-                const jsonArray = await response.json();
+    const jsonArray = await response.json();
 
-                if (!Array.isArray(jsonArray) || jsonArray.length < 2) {
-                    throw new Error('Invalid data format');
-                }
+    if (!Array.isArray(jsonArray) || jsonArray.length < 2) {
+        throw new Error('Invalid data format');
+    }
 
-                // Sort by date ascending to fix incorrect cumulative plots
-                const sorted = jsonArray
-                    .filter(item => item.Date && item.Close != null)
-                    .sort((a, b) => new Date(a.Date) - new Date(b.Date));
+    // Convert Excel serial date to JS Date
+    function excelDateToJSDate(serial) {
+        // Excel epoch starts Jan 1 1900
+        // JS epoch starts Jan 1 1970
+        const utcDays = Math.floor(serial - 25569);
+        const utcValue = utcDays * 86400;
 
-                const dates = sorted.map(item => new Date(item.Date));
-                const prices = sorted.map(item => Number(item.Close));
+        const dateInfo = new Date(utcValue * 1000);
 
-                // Validate
-                if (dates.some(d => isNaN(d.getTime()))) {
-                    throw new Error('Invalid date format');
-                }
+        // Handle fractional day (time component)
+        const fractionalDay = serial - Math.floor(serial);
 
-                if (prices.some(p => typeof p !== 'number' || isNaN(p))) {
-                    throw new Error('Invalid price format');
-                }
+        let totalSeconds = Math.round(86400 * fractionalDay);
 
-                return { dates, prices };
-            }
+        const seconds = totalSeconds % 60;
+        totalSeconds -= seconds;
+
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+        dateInfo.setHours(hours);
+        dateInfo.setMinutes(minutes);
+        dateInfo.setSeconds(seconds);
+
+        return dateInfo;
+    }
+
+    // Sort chronologically
+    const sorted = jsonArray
+        .filter(item => item["0"] != null && item.Close != null)
+        .sort((a, b) => Number(a["0"]) - Number(b["0"]));
+
+    // Convert Excel dates
+    const dates = sorted.map(item => excelDateToJSDate(Number(item["0"])));
+    const prices = sorted.map(item => Number(item.Close));
+
+    // Validate
+    if (dates.some(d => isNaN(d.getTime()))) {
+        throw new Error('Invalid Excel date format');
+    }
+
+    if (prices.some(p => typeof p !== 'number' || isNaN(p))) {
+        throw new Error('Invalid price format');
+    }
+
+    return { dates, prices };
+}
 
             // Compute returns and cumulative wealth starting at $100
             function computeWealth(prices) {
