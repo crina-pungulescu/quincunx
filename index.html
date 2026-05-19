@@ -875,9 +875,6 @@
         </div>
     </div>
 
-
-    let currentRange = 10;
-
     
     <!-- Plotly -->
     <script src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
@@ -985,8 +982,14 @@
 
                     status.innerHTML = `Loading ${stocks[ticker].name}...`;
 
-                   const stockReturns = computeReturns(stockData.prices);
+                   
+
+const stockData = await loadStockData(ticker);
+const marketData = await loadStockData('SP500');
+
+const stockReturns = computeReturns(stockData.prices);
 const marketReturns = computeReturns(marketData.prices);
+
 
 // Approximate weekly observations
 const observationsPerYear = 52;
