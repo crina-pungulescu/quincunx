@@ -904,6 +904,13 @@
                 }
             };
 
+            const maxAbs = Math.max(
+    Math.abs(Math.min(...x.map(v => v * 100))),
+    Math.abs(Math.max(...x.map(v => v * 100))),
+    Math.abs(Math.min(...y.map(v => v * 100))),
+    Math.abs(Math.max(...y.map(v => v * 100)))
+);
+
             let currentTicker = 'SMCI';
             let showBeta = false;
             let currentRange = 10;
@@ -1072,12 +1079,14 @@ const x = marketReturns.slice(-n);
 
                         xaxis: {
                             title: 'S&P 500 Weekly Return (%)',
-                            zeroline: true
+                            zeroline: true,
+                            range: [-maxAbs, maxAbs]
                         },
 
                         yaxis: {
                             title: `${stocks[ticker].name} Weekly Return (%)`,
                             zeroline: true,
+                            range: [-maxAbs, maxAbs],
                             scaleanchor: "x",
                             scaleratio: 1
                         },
