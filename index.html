@@ -1077,8 +1077,11 @@ const x = marketReturns.slice(-n);
 
                         yaxis: {
                             title: `${stocks[ticker].name} Weekly Return (%)`,
-                            zeroline: true
+                            zeroline: true,
+                            scaleanchor: "x",
+                            scaleratio: 1
                         },
+                
 
                         plot_bgcolor: '#faf9f4',
                         paper_bgcolor: '#faf9f4',
