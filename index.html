@@ -881,8 +881,7 @@
 
 
 
-
-<script>
+    <script>
 (function () {
 
     const stocks = {
@@ -942,30 +941,6 @@
         return { alpha, beta };
     }
 
-    function correlation(x, y) {
-
-    const n = x.length;
-
-    const meanX = x.reduce((a,b)=>a+b,0) / n;
-    const meanY = y.reduce((a,b)=>a+b,0) / n;
-
-    let num = 0;
-    let denX = 0;
-    let denY = 0;
-
-    for (let i = 0; i < n; i++) {
-
-        const dx = x[i] - meanX;
-        const dy = y[i] - meanY;
-
-        num += dx * dy;
-        denX += dx * dx;
-        denY += dy * dy;
-    }
-
-    return num / Math.sqrt(denX * denY);
-}
-
     async function createScatterPlot(ticker) {
 
         const status = document.getElementById('beta-status');
@@ -1001,7 +976,7 @@
 
         const layout = {
             title: {
-                text: `${stocks[ticker].name} vs S&P 500`,
+                text: `${stocks[ticker].name} vs S&P 500<br><span style="font-size:0.8rem;">CAPM: Weekly Returns</span>`,
                 x: 0.5
             },
 
@@ -1043,8 +1018,6 @@
 
             const { alpha, beta } = linearRegression(xPct, yPct);
 
-            const rho = correlation(xPct, yPct);
-
             const xLine = [-maxAbs, maxAbs];
             const yLine = xLine.map(v => alpha + beta * v);
 
@@ -1059,21 +1032,21 @@
 
             // FIX: paper-space annotation (immune to axis scaling issues)
             layout.annotations = [{
-                x: 0.75,
+                x: 0.85,
                 y: 0.85,
                 xref: 'paper',
                 yref: 'paper',
-                text: `β = ${beta.toFixed(2)`,
+                text: `β = ${beta.toFixed(2)}`,
                 showarrow: false,
                 font: { size: 14, color: '#222' },
                 bgcolor: 'rgba(250,249,244,0.9)',
                 borderpad: 4
             }];
 
-            status.innerHTML = `y = ${alpha.toFixed(2)} + ${beta.toFixed(2)} x`;
+            status.innerHTML = `${stocks[ticker].name} • β = ${beta.toFixed(2)}`;
 
         } else {
-            status.innerHTML = `ρ = ${rho.toFixed(2)}`;
+            status.innerHTML = `${stocks[ticker].name} vs S&P 500`;
         }
 
         Plotly.newPlot('beta-chart', traces, layout, {
@@ -1126,6 +1099,8 @@
 
 })();
 </script>
+
+
 
 
 </section>
