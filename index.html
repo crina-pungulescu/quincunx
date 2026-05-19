@@ -863,7 +863,7 @@
         <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
             <button id="toggle-beta"
                 style="background: #e0ddd5; border: none; padding: 0.4rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem;">
-                Show Regression Line
+                Regression Line
             </button>
         </div>
 
@@ -880,7 +880,7 @@
     <script src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
 
 
-    <script>
+<script>
 (function () {
 
     const stocks = {
@@ -943,7 +943,6 @@
     async function createScatterPlot(ticker) {
 
         const status = document.getElementById('beta-status');
-
         status.innerHTML = `Loading ${stocks[ticker].name}...`;
 
         const stock = await loadStockData(ticker);
@@ -957,6 +956,7 @@
         const xRaw = x.slice(-n);
         const yRaw = y.slice(-n);
 
+        // ✔ FIX: convert to percent BEFORE regression
         const xPct = xRaw.map(v => v * 100);
         const yPct = yRaw.map(v => v * 100);
 
@@ -978,10 +978,11 @@
 
         if (showBeta) {
 
-            const { alpha, beta } = linearRegression(xRaw, yRaw);
+            // ✔ FIX: regression in percent space (fully consistent)
+            const { alpha, beta } = linearRegression(xPct, yPct);
 
             const xLine = [-maxAbs, maxAbs];
-            const yLine = xLine.map(v => (alpha + beta * (v/100)) * 100);
+            const yLine = xLine.map(v => alpha + beta * v);
 
             traces.push({
                 x: xLine,
@@ -992,9 +993,10 @@
                 showlegend: false
             });
 
+            // ✔ FIX: ALWAYS visible β (stable placement)
             annotation = [{
-                x: maxAbs * 0.6,
-                y: (alpha + beta * (maxAbs*0.6/100)) * 100,
+                x: maxAbs * 0.85,
+                y: alpha + beta * (maxAbs * 0.85),
                 text: `β = ${beta.toFixed(2)}`,
                 showarrow: false,
                 font: { size: 14, color: '#222' },
@@ -1003,6 +1005,7 @@
             }];
 
             status.innerHTML = `${stocks[ticker].name} • β = ${beta.toFixed(2)}`;
+
         } else {
             status.innerHTML = `${stocks[ticker].name} vs S&P 500`;
         }
@@ -1062,20 +1065,20 @@
 
     document.getElementById('toggle-beta').addEventListener('click', () => {
 
-    showBeta = !showBeta;
+        showBeta = !showBeta;
 
-    const btn = document.getElementById('toggle-beta');
+        const btn = document.getElementById('toggle-beta');
 
-    if (showBeta) {
-        btn.style.background = 'var(--accent)';
-        btn.style.color = 'white';
-    } else {
-        btn.style.background = '#e0ddd5';
-        btn.style.color = '#2a2a28';
-    }
+        if (showBeta) {
+            btn.style.background = 'var(--accent)';
+            btn.style.color = 'white';
+        } else {
+            btn.style.background = '#e0ddd5';
+            btn.style.color = '#2a2a28';
+        }
 
-    createScatterPlot(currentTicker);
-});
+        createScatterPlot(currentTicker);
+    });
 
     document.querySelectorAll('.range-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1098,6 +1101,7 @@
 })();
 </script>
 
+   
        
 </section>
 
