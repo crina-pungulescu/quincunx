@@ -906,6 +906,7 @@
 
             let currentTicker = 'SMCI';
             let showBeta = false;
+            let currentRange = 10;
 
             // Excel serial date conversion
             function excelDateToJSDate(serial) {
@@ -1145,6 +1146,28 @@ const x = marketReturns.slice(-n);
 
                     createScatterPlot(currentTicker);
                 });
+
+            // Range buttons
+document.querySelectorAll('.range-btn').forEach(btn => {
+
+    btn.addEventListener('click', () => {
+
+        currentRange = Number(btn.getAttribute('data-range'));
+
+        // Reset styles
+        document.querySelectorAll('.range-btn').forEach(b => {
+            b.style.background = '#e0ddd5';
+            b.style.color = '#2a2a28';
+        });
+
+        // Highlight active button
+        btn.style.background = 'var(--accent)';
+        btn.style.color = 'white';
+
+        createScatterPlot(currentTicker);
+    });
+
+});
 
             // Initial plot
             createScatterPlot(currentTicker);
