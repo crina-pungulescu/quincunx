@@ -1083,7 +1083,8 @@ traces.push({
                             title: 'S&P 500 Weekly Return (%)',
                             zeroline: true,
                             range: [-maxAbs, maxAbs],
-                            automargin: true
+                            automargin: true,
+                            fixedrange: false
                             
                         },
 
@@ -1093,27 +1094,32 @@ traces.push({
                             range: [-maxAbs, maxAbs],
                             scaleanchor: 'x',
                             scaleratio: 1,
-                            automargin: true
+                            automargin: true,
+                            fixedrange: false
                         
                         },
 
                         annotations: showBeta ? [{
-    x: regX[regX.length - 1],
-    y: regY[regY.length - 1],
+    x: regX[1],
+    y: regY[1],
     xref: 'x',
     yref: 'y',
     text: `β = ${beta.toFixed(2)}`,
     showarrow: true,
     arrowhead: 2,
-    ax: 20,
-    ay: -20,
+    ax: 10,
+    ay: -10,
     font: {
         size: 13,
         color: '#222'
     },
-    bgcolor: 'rgba(250,249,244,0.9)',
-    borderpad: 6
-}] : []
+    bgcolor: 'rgba(250,249,244,0.95)',
+    borderpad: 6,
+    bordercolor: '#ddd',
+    borderwidth: 1
+}] : [],
+
+                       
 
                         
                 
@@ -1129,7 +1135,7 @@ traces.push({
                         autosize: true,
 
                         margin: {
-                            t: 80, r: 60, b: 60, l: 60 
+                            t: 80, r: 40, b: 60, l: 60 
                         }
                     };
 
