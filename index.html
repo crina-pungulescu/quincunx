@@ -1081,8 +1081,8 @@ traces.push({
                         xaxis: {
                             title: 'S&P 500 Weekly Return (%)',
                             zeroline: true,
-                            range: [-maxAbs, maxAbs],
-                            constrain: 'domain'
+                            range: [-maxAbs, maxAbs]
+                            
                         },
 
                         yaxis: {
@@ -1090,25 +1090,29 @@ traces.push({
                             zeroline: true,
                             range: [-maxAbs, maxAbs],
                             scaleanchor: 'x',
-                            scaleratio: 1,
-                            constrain: 'domain'
+                            scaleratio: 1
+                        
                         },
 
                         annotations: showBeta ? [{
-    x: regX[1] * 100,
-    y: regY[1] * 100,
+    x: regX[regX.length - 1],
+    y: regY[regY.length - 1],
     xref: 'x',
     yref: 'y',
     text: `β = ${beta.toFixed(2)}`,
-    showarrow: false,
+    showarrow: true,
+    arrowhead: 2,
+    ax: 20,
+    ay: -20,
     font: {
         size: 13,
         color: '#222'
     },
-    align: 'left',
-    bgcolor: 'rgba(250,249,244,0.85)',
-    borderpad: 4
+    bgcolor: 'rgba(250,249,244,0.9)',
+    borderpad: 6
 }] : []
+
+                        
                 
 
                         plot_bgcolor: '#faf9f4',
