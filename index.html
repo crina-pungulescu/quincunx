@@ -1018,23 +1018,19 @@ const n = Math.min(
 const y = stockReturns.slice(-n);
 const x = marketReturns.slice(-n);
 
-// Convert to percent ONCE
-const yPct = y.map(v => v * 100);
 const xPct = x.map(v => v * 100);
+const yPct = y.map(v => v * 100);
 
-// Compute symmetric axis limit
-const maxAbs = Math.max(
-    ...xPct.map(Math.abs),
-    ...yPct.map(Math.abs)
-);
+const all = xPct.concat(yPct).filter(v => isFinite(v));
+const maxAbs = Math.max(...all.map(Math.abs));
                 
 
 
 
 
                     const scatterTrace = {
-                        x: x.map(v => v * 100),
-                        y: y.map(v => v * 100),
+                        x: xPct,
+                        y: yPct,
                         mode: 'markers',
                         type: 'scatter',
                         name: stocks[ticker].name,
@@ -1052,11 +1048,11 @@ const maxAbs = Math.max(
 
                         const { alpha, beta } = linearRegression(x, y);
 
-                        const minX = Math.min(...x);
-                        const maxX = Math.max(...x);
+                        const minX = Math.min(...xPct);
+                        const maxX = Math.max(...xPct);
 
                         const regX = [minX, maxX];
-                        const regY = regX.map(v => alpha + beta * v);
+                        const regY = regX.map(v => alpha + beta * (v / 100)) * 100);
 
                         traces.push({
                             x: regX.map(v => v * 100),
