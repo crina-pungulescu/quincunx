@@ -1018,11 +1018,12 @@ const n = Math.min(
 const y = stockReturns.slice(-n);
 const x = marketReturns.slice(-n);
 
-const xPct = x.map(v => v * 100);
-const yPct = y.map(v => v * 100);
+                    const xPct = x.map(v => v * 100);
+                    const yPct = y.map(v => v * 100);
 
-const all = xPct.concat(yPct).filter(v => isFinite(v));
-const maxAbs = Math.max(...all.map(Math.abs));
+                    const all = xPct.concat(yPct).filter(v => isFinite(v));
+
+                    const maxAbs = Math.max(...all.map(Math.abs)) || 1;
                 
 
 
@@ -1048,11 +1049,8 @@ const maxAbs = Math.max(...all.map(Math.abs));
 
                         const { alpha, beta } = linearRegression(x, y);
 
-                        const minX = Math.min(...xPct);
-                        const maxX = Math.max(...xPct);
-
-                        const regX = [minX, maxX];
-                        const regY = regX.map(v => alpha + beta * (v / 100)) * 100);
+                        const regX = [Math.min(...xPct), Math.max(...xPct)];
+                        const regY = regX.map(v => (alpha + beta * (v / 100)) * 100);
 
                         traces.push({
                             x: regX.map(v => v * 100),
