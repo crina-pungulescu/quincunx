@@ -39,8 +39,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 - 1654 – Pascal and Fermat stumble upon probability theory
 - 1889 – Galton's Law of Unreason (interpretation of the quincunx)
 - 1900 – Louis Bachelier's thesis and the birth of "modern finance" (March 29th)
-- 1973 – Black, Scholes, and Merton (option pricing)
-- Today – The CAPM and beyond
+- Modern Finance Theory – The CAPM and beyond
 
 ---
 ### Parting words of wisdom
