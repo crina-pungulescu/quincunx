@@ -19,7 +19,7 @@ Before there were prophets, there were profits. The oldest writing we have—cun
 
 > "I know of scarcely anything so apt to impress the imagination as the wonderful form of cosmic order expressed by the Law of Frequency of Error. The law would have been personified by the Greeks and deified, if they had known of it. It reigns with serenity and in complete self-effacement amidst the wildest confusion. The huger the mob, and the greater the apparent anarchy, the more perfect is its sway. It is the supreme law of Unreason."
 >
-> — Sir Francis Galton, *Natural Inheritance* (1894)
+> — Sir Francis Galton, *Natural Inheritance* (London, 1894)
 
 
 ---
