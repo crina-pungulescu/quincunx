@@ -75,12 +75,13 @@ This presentation assumes you know nothing about finance. It will not derive the
 ---
 ### References
 
-- Aiden, Erez, and Jean-Baptiste Michel. Uncharted: Big Data as a Lens on Human Culture. New York: Riverhead Books, 2013
-- Davis, Mark H., Etheridge, Alison. Speculation: Louis Bachelier and the Origins of Modern Finance.
+- Aiden, Erez, Michel, Jean-Baptiste. *Uncharted: Big Data as a Lens on Human Culture*. Riverhead Books, 2013
+- Berk, Jonathan and DeMarzo, Peter. *Corporate Finance*. Pearson, 2019
+- Davis, Mark H., Etheridge, Alison. *Speculation: Louis Bachelier and the Origins of Modern Finance*.
 Princeton University Press, 2006
-- Desai, Mihir. The Wisdom of Finance: Discovering Humanity in the World of Risk and Return. Boston: Houghton Mifflin Harcourt, 2017
-- Devlin, Keith K. The Unfinished Game: Pascal, Fermat, and the Seventeenth-Century Letter that Made the World Modern. New York : Basic Books, 2008
-- Galton, Francis. Natural Inheritance. London: MacMillan, 1889
+- Desai, Mihir. *The Wisdom of Finance: Discovering Humanity in the World of Risk and Return*. Houghton Mifflin Harcourt, 2017
+- Devlin, Keith K. *The Unfinished Game: Pascal, Fermat, and the Seventeenth-Century Letter that Made the World Modern*. Basic Books, 2008
+- Galton, Francis. *Natural Inheritance*. MacMillan, 1889
 
 ---
 
