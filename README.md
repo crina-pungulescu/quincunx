@@ -87,4 +87,4 @@ Princeton University Press, 2006
 
 ### License
 
-MIT. Use it, remix it, teach it. Keep one of the cool quotations? 😉
+MIT. Use, remix, learn, teach. Keep one of the cool quotations? 😉
