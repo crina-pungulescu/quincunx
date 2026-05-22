@@ -69,7 +69,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 - The Defiant Ones (1958, Director: Stanley Kramer, Stars: Tony Curtis, Sidney Poitier): [The Internet Archive](https://archive.org/details/the.-defiant.-ones.-1958)
 - Template: [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill)
 - Narrations: [ttsreader.com](https://ttsreader.com/player/) and [narakeet.com](https://www.narakeet.com/languages/)
-- What remains and everything you wish were different: [Crina Pungulescu](https://www.linkedin.com/in/crinapungulescu)
+- Everything else and everything you wish were different: [Crina Pungulescu](https://www.linkedin.com/in/crinapungulescu)
   
 
 ---
