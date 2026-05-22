@@ -65,6 +65,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 - Poseidon, God of the Sea: [Mythos The Historian](https://www.youtube.com/watch?v=2MXGq88qu8s)
 - Lex Rhodia: [The Path of Justice](https://www.youtube.com/watch?v=5GMYB3FrAa4)
 - Bachelier's Theory of Speculation: [OnePageCode](https://www.youtube.com/watch?v=CBSi3h83-9g)
+- The Defiant Ones (1958, Director: Stanley Kramer, Stars: Tony Curtis, Sidney Poitier): [The Internet Archive](https://archive.org/details/the.-defiant.-ones.-1958)
 - Template: [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill)
 - Narrations: [ttsreader.com](https://ttsreader.com/player/) and [narakeet.com](https://www.narakeet.com/languages/)
 - What remains and everything you wish were different: [Crina Pungulescu](https://www.linkedin.com/in/crinapungulescu)
