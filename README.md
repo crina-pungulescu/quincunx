@@ -65,7 +65,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 - Poseidon, God of the Sea: [Mythos The Historian](https://www.youtube.com/watch?v=2MXGq88qu8s)
 - Lex Rhodia: [The Path of Justice](https://www.youtube.com/watch?v=5GMYB3FrAa4)
 - Bachelier's Theory of Speculation: [OnePageCode](https://www.youtube.com/watch?v=CBSi3h83-9g)
-- Boléro (Music: Maurice Ravel, 1928, Choreography: Maurice Béjart, 1961, Interpretation: Maya Plisetskaya, 1974): [claudelequang](https://www.youtube.com/watch?v=4qSNhKI5vvc&list=RD4qSNhKI5vvc&start_radio=1)
+- Boléro (Music: Maurice Ravel, 1928; Choreography: Maurice Béjart, 1961; Interpretation: Maya Plisetskaya, 1974): [claudelequang](https://www.youtube.com/watch?v=4qSNhKI5vvc&list=RD4qSNhKI5vvc&start_radio=1)
 - The Defiant Ones (1958, Director: Stanley Kramer, Stars: Tony Curtis, Sidney Poitier): [The Internet Archive](https://archive.org/details/the.-defiant.-ones.-1958)
 - Template: [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill)
 - Narrations: [ttsreader.com](https://ttsreader.com/player/) and [narakeet.com](https://www.narakeet.com/languages/)
