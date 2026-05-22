@@ -66,7 +66,7 @@ This presentation assumes you know nothing about finance. It will not derive the
 - Lex Rhodia: [The Path of Justice](https://www.youtube.com/watch?v=5GMYB3FrAa4)
 - Bachelier's Theory of Speculation: [OnePageCode](https://www.youtube.com/watch?v=CBSi3h83-9g)
 - Boléro (Music: Maurice Ravel, 1928; Choreography: Maurice Béjart, 1961; Interpretation: Maya Plisetskaya, 1975): [claudelequang](https://www.youtube.com/watch?v=4qSNhKI5vvc&list=RD4qSNhKI5vvc&start_radio=1)
-- The Defiant Ones (1958, Director: Stanley Kramer, Stars: Tony Curtis, Sidney Poitier): [The Internet Archive](https://archive.org/details/the.-defiant.-ones.-1958)
+- The Defiant Ones (Director: Stanley Kramer; Stars: Tony Curtis, Sidney Poitier; 1958): [The Internet Archive](https://archive.org/details/the.-defiant.-ones.-1958)
 - Template: [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill)
 - Narrations: [ttsreader.com](https://ttsreader.com/player/) and [narakeet.com](https://www.narakeet.com/languages/)
 - Everything else and everything you wish were different: [Crina Pungulescu](https://www.linkedin.com/in/crinapungulescu)
